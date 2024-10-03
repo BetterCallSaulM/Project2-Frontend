@@ -13,8 +13,22 @@ import NotFound from './pages/NotFound.js';
 import Login from './pages/Login.js';
 import SignUp from './pages/SignUp.js';
 import Logout from './pages/Logout.js';
+import LoginButton from './components/login.js';
+import { useEffect } from 'react';
+import { gapi } from 'gapi-script';
+
+const clientId = "723447073505-5ph6b9rvg7h14j21tl0n5cua4dvl8cpa.apps.googleusercontent.com"
 
 function App() {
+  useEffect(()=>{
+    function start() {
+      gapi.client.init({
+        clientId: clientId,
+        scope: ""
+      })
+    };
+    gapi.load('client:auth2', start)
+  });
   return (
     <Router>
       <Routes>
@@ -33,6 +47,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<NotFound />} /> Catch-all route for 404 pages
       </Routes>
+      <LoginButton></LoginButton>
     </Router>
   );
 }
