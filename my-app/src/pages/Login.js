@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout'; 
+import LoginButton from '../components/login';
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -39,6 +40,7 @@ function Login() {
         </div>
         <button type="submit">Login</button>
       </form>
+      <LoginButton />
     </Layout>
   );
 }

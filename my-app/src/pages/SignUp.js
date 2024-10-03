@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout'; 
 import axios from 'axios';
+import LoginButton from '../components/login';
 
 function SignUp() {
   const [name, setName] = useState('');      // State for name
@@ -50,6 +51,7 @@ const insertRow = () => {
         </div>
         <button type="submit">Sign Up</button>
       </form>
+      <LoginButton />
     </Layout>
   );
 }
