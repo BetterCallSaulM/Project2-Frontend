@@ -21,7 +21,6 @@ function EditMovie() {
 
   const handleEditMovie = (e) => {
     e.preventDefault();
-    // Update the savedMovie state when the form is submitted
     setSavedMovie({
       title: movieTitle,
       director,
@@ -35,75 +34,79 @@ function EditMovie() {
 
   return (
     <Layout>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        {/* Form for editing movie */}
-        <div style={{ flex: 1 }}>
+      <div style={styles.container}>
+        <div style={styles.formContainer}>
           <h1>Edit Movie</h1>
-          <form onSubmit={handleEditMovie}>
-            <div>
-              <label>Movie Title</label>
+          <form onSubmit={handleEditMovie} style={styles.form}>
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Movie Title</label>
               <input 
                 type="text" 
                 value={movieTitle} 
                 onChange={(e) => setMovieTitle(e.target.value)} 
                 required 
+                style={styles.input}
               />
             </div>
-            <div>
-              <label>Director</label>
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Director</label>
               <input 
                 type="text" 
                 value={director} 
                 onChange={(e) => setDirector(e.target.value)} 
                 required 
+                style={styles.input}
               />
             </div>
-            <div>
-              <label>Image URL</label>
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Image URL</label>
               <input 
                 type="text" 
                 value={imageUrl} 
                 onChange={(e) => setImageUrl(e.target.value)} 
                 required 
+                style={styles.input}
               />
             </div>
-            <div>
-              <label>Description</label>
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Description</label>
               <textarea 
                 value={description} 
                 onChange={(e) => setDescription(e.target.value)} 
                 required 
+                style={styles.textarea}
               />
             </div>
-            <div>
-              <label>Genre</label>
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Genre</label>
               <input 
                 type="text" 
                 value={genre} 
                 onChange={(e) => setGenre(e.target.value)} 
                 required 
+                style={styles.input}
               />
             </div>
-            <div>
-              <label>Year</label>
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Year</label>
               <input 
                 type="number" 
                 value={year} 
                 onChange={(e) => setYear(e.target.value)} 
                 required 
+                style={styles.input}
               />
             </div>
-            <button type="submit">Save Changes</button>
+            <button type="submit" style={styles.button}>Save Changes</button>
           </form>
         </div>
 
-        {/* Display current movie info */}
-        <div style={{ flex: 1, marginLeft: '20px' }}>
+        <div style={styles.movieDetails}>
           <h2>Current Movie Info</h2>
           <img 
             src={savedMovie.image} 
             alt={savedMovie.title} 
-            style={{ width: '200px', marginBottom: '20px' }}
+            style={styles.poster}
           />
           <p><strong>Title:</strong> {savedMovie.title}</p>
           <p><strong>Director:</strong> {savedMovie.director}</p>
@@ -115,5 +118,68 @@ function EditMovie() {
     </Layout>
   );
 }
+
+const styles = {
+  container: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '40px',
+    padding: '20px',
+  },
+  formContainer: {
+    flex: 1,
+    maxWidth: '500px',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px',
+  },
+  formGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  label: {
+    marginBottom: '5px',
+    fontSize: '16px',
+    color: '#333',
+  },
+  input: {
+    padding: '10px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    fontSize: '16px',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  textarea: {
+    padding: '10px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    fontSize: '16px',
+    width: '100%',
+    height: '100px',
+    boxSizing: 'border-box',
+  },
+  button: {
+    padding: '10px 20px',
+    
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    marginTop: '20px',
+    width: '100%',
+  },
+  movieDetails: {
+    flex: 1,
+    maxWidth: '500px',
+  },
+  poster: {
+    width: '100%',
+    borderRadius: '8px',
+    marginBottom: '20px',
+  },
+};
 
 export default EditMovie;

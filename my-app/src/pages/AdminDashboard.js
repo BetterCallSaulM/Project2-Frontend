@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Layout from '../components/Layout'; // Adjust the path to your Layout component
-import { useNavigate } from 'react-router-dom'; // Assuming you are using react-router-dom for navigation
+import Layout, { buttonStyle } from '../components/Layout';  // Correctly import Layout and styles
+import { useNavigate } from 'react-router-dom';  // For navigation
 
 function AdminDashboard() {
-  const navigate = useNavigate(); // To navigate to the Add Movie page
+  const navigate = useNavigate();
 
   const [users, setUsers] = useState([
     { id: 1, name: 'Luis Ruiz', email: 'luis.ruiz@example.com', watchlist: [{ id: 101, title: 'The Matrix' }, { id: 102, title: 'Inception' }] },
@@ -19,12 +19,10 @@ function AdminDashboard() {
     { id: 105, title: 'Interstellar', director: 'Christopher Nolan' }
   ]);
 
-  // Delete user by ID
   const deleteUser = (id) => {
     setUsers(users.filter(user => user.id !== id));
   };
 
-  // Delete a movie from a user's watchlist
   const deleteMovieFromUser = (userId, movieId) => {
     setUsers(users.map(user => {
       if (user.id === userId) {
@@ -34,7 +32,6 @@ function AdminDashboard() {
     }));
   };
 
-  // Delete movie from the main movie list
   const deleteMovie = (movieId) => {
     setMovies(movies.filter(movie => movie.id !== movieId));
     setUsers(users.map(user => ({
@@ -43,28 +40,24 @@ function AdminDashboard() {
     })));
   };
 
-  // Navigate to Add Movie page
   const addMovie = () => {
-    navigate('/add-movie'); // Adjust to your actual route for adding a movie
+    navigate('/add-movie');
   };
 
-  // Edit movie (you could navigate to an edit page)
   const editMovie = (movieId) => {
-    navigate(`/edit-movie/${movieId}`); // Adjust to your actual edit movie route
+    navigate(`/edit-movie/${movieId}`);
   };
 
   return (
     <Layout>
-      <div style={styles.container}>
+      <div>
         <h1>Admin Dashboard</h1>
-        <p>Manage users, movies, and wishlists.</p>
+        <p>Manage users, movies, and watchlists.</p>
 
-        {/* Button to link to Add Movie page */}
-        <button style={styles.addButton} onClick={addMovie}>Add New Movie</button>
+        <button style={buttonStyle} onClick={addMovie}>Add New Movie</button>
 
-        {/* Users Section */}
         <h2>Users</h2>
-        <table style={styles.table}>
+        <table>
           <thead>
             <tr>
               <th>ID</th>
@@ -80,20 +73,19 @@ function AdminDashboard() {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>
-                  <button style={styles.deleteButton} onClick={() => deleteUser(user.id)}>Delete User</button>
+                  <button style={buttonStyle} onClick={() => deleteUser(user.id)}>Delete User</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {/* Watchlists per User */}
         <h2>Movie Watchlists</h2>
         {users.map(user => (
           <div key={user.id}>
             <h3>{user.name}'s Watchlist</h3>
             {user.watchlist.length > 0 ? (
-              <table style={styles.table}>
+              <table>
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -107,7 +99,7 @@ function AdminDashboard() {
                       <td>{movie.id}</td>
                       <td>{movie.title}</td>
                       <td>
-                        <button style={styles.deleteButton} onClick={() => deleteMovieFromUser(user.id, movie.id)}>Delete Movie</button>
+                        <button style={buttonStyle} onClick={() => deleteMovieFromUser(user.id, movie.id)}>Delete Movie</button>
                       </td>
                     </tr>
                   ))}
@@ -119,9 +111,8 @@ function AdminDashboard() {
           </div>
         ))}
 
-        {/* Admin Movie Management Section */}
         <h2>All Movies</h2>
-        <table style={styles.table}>
+        <table>
           <thead>
             <tr>
               <th>ID</th>
@@ -137,8 +128,8 @@ function AdminDashboard() {
                 <td>{movie.title}</td>
                 <td>{movie.director}</td>
                 <td>
-                  <button style={styles.editButton} onClick={() => editMovie(movie.id)}>Edit</button>
-                  <button style={styles.deleteButton} onClick={() => deleteMovie(movie.id)}>Delete</button>
+                  <button style={buttonStyle} onClick={() => editMovie(movie.id)}>Edit</button>
+                  <button style={buttonStyle} onClick={() => deleteMovie(movie.id)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -148,53 +139,5 @@ function AdminDashboard() {
     </Layout>
   );
 }
-
-const styles = {
-  container: {
-    padding: '20px',
-    maxWidth: '1200px',
-    margin: '0 auto'
-  },
-  table: {
-    width: '40%',
-    borderCollapse: 'collapse',
-    marginBottom: '20px',
-  },
-  addButton: {
-    padding: '10px 15px',
-    marginBottom: '20px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-  deleteButton: {
-    padding: '5px 5px',
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    borderRadius: '3px',
-    cursor: 'pointer',
-  },
-  editButton: {
-    padding: '5px 10px',
-    marginRight: '10px',
-    backgroundColor: '#2196F3',
-    color: 'white',
-    border: 'none',
-    borderRadius: '3px',
-    cursor: 'pointer',
-  },
-  th: {
-    backgroundColor: '#f2f2f2',
-    textAlign: 'left',
-    padding: '100px',
-  },
-  td: {
-    padding: '3px',
-    textAlign: 'left',
-  },
-};
 
 export default AdminDashboard;

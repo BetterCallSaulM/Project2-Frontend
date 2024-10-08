@@ -18,16 +18,20 @@ function MovieDetails() {
 
   const [category, setCategory] = useState('');  // Store the selected category
   const [successMessage, setSuccessMessage] = useState('');  // Success notification
+  const [rating, setRating] = useState(0);  // Store the rating
 
   const handleAddToWatchlist = () => {
     if (category) {
-      // Logic to add the movie to the watchlist with the selected category
       console.log(`Added ${movie.title} to watchlist under "${category}"`);
       setSuccessMessage(`"${movie.title}" added to your watchlist under "${category}"!`);
       setCategory('');  // Reset category after adding
     } else {
       setSuccessMessage('Please select a category first.');
     }
+  };
+
+  const handleRatingClick = (value) => {
+    setRating(value);  // Set the selected rating
   };
 
   return (
@@ -43,6 +47,21 @@ function MovieDetails() {
           <p><strong>Year:</strong> {movie.year}</p>
           <p>{movie.description}</p>
 
+          {/* Rating Section */}
+          <div style={styles.ratingContainer}>
+            <strong>Rating: </strong>
+            {[...Array(5)].map((_, index) => (
+              <span
+                key={index}
+                style={index < rating ? styles.starFilled : styles.star}
+                onClick={() => handleRatingClick(index + 1)}
+              >
+                &#9733;
+              </span>
+            ))}
+          </div>
+
+          {/* Watchlist Section */}
           <div>
             <label htmlFor="category">Add to Watchlist: </label>
             <select 
@@ -106,6 +125,19 @@ const styles = {
   successMessage: {
     color: 'green',
     marginTop: '10px',
+  },
+  ratingContainer: {
+    marginBottom: '15px',
+  },
+  star: {
+    fontSize: '25px',
+    cursor: 'pointer',
+    color: '#ccc',  // Empty star color
+  },
+  starFilled: {
+    fontSize: '25px',
+    cursor: 'pointer',
+    color: '#ffcc00',  // Filled star color
   },
 };
 
