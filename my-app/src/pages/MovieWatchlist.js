@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Layout from '../components/Layout'; 
+import Layout from '../components/Layout';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is imported
 
 function MovieWatchlist() {
   // Simulated user movies and all available movies
@@ -20,65 +21,119 @@ function MovieWatchlist() {
   // Handle updating the movie details
   const handleUpdate = (e, watchlistId) => {
     e.preventDefault();
-    // Logic to update the movie in the watchlist
     console.log("Movie updated for watchlistId:", watchlistId);
   };
 
   // Handle deleting the movie from the watchlist
   const handleDelete = (e, watchlistId) => {
     e.preventDefault();
-    // Logic to delete the movie from the watchlist
     setUserMovies(userMovies.filter(movie => movie.watchlist_id !== watchlistId));
     console.log("Movie deleted from watchlistId:", watchlistId);
   };
 
   return (
     <Layout>
-      <h2>Update Your Favorite Movies</h2>
+      <div className="container mt-5 d-flex flex-column align-items-center">
+        <h2 className="mb-4 text-center text-warning">Manage Your Watchlist</h2>
 
-      {userMovies && userMovies.length > 0 ? (
-        userMovies.map((movie) => (
-          <form key={movie.watchlist_id} onSubmit={(e) => handleUpdate(e, movie.watchlist_id)}>
-            <div>
-              <strong>Title:</strong> {movie.title} (Current)
-              <input type="hidden" name="watchlistId" value={movie.watchlist_id} />
-            </div>
+        {userMovies && userMovies.length > 0 ? (
+          userMovies.map((movie) => (
+            <form
+              key={movie.watchlist_id}
+              onSubmit={(e) => handleUpdate(e, movie.watchlist_id)}
+              className="mb-4 w-75 bg-dark p-4 rounded"  // Dark background with padding and rounded corners
+            >
+              <div className="form-group row justify-content-center text-light">
+                <label className="col-sm-4 col-form-label text-right font-weight-bold">
+                  Title (Current):
+                </label>
+                <div className="col-sm-6">
+                  <p className="form-control-plaintext text-left">{movie.title}</p>
+                </div>
+              </div>
 
-            <div>
-              <label htmlFor="movieId">Change Movie:</label>
-              <select name="movieId" defaultValue={movie.id}>
-                {allMovies.map((m) => (
-                  <option key={m.movieId} value={m.movieId}>
-                    {m.title}
-                  </option>
-                ))}
-              </select>
-            </div>
+              <div className="form-group row justify-content-center">
+                <label htmlFor="movieId" className="col-sm-4 col-form-label text-right text-light">
+                  Change Movie:
+                </label>
+                <div className="col-sm-6">
+                  <select name="movieId" className="form-control custom-dropdown">
+                    {allMovies.map((m) => (
+                      <option key={m.movieId} value={m.movieId}>
+                        {m.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-            <div>
-              <label htmlFor="status">Status:</label>
-              <select name="status" defaultValue={movie.status}>
-                <option value="Planned">Planned</option>
-                <option value="Watched">Watched</option>
-                <option value="Favorite">Favorite</option>
-              </select>
-            </div>
+              <div className="form-group row justify-content-center">
+                <label htmlFor="status" className="col-sm-4 col-form-label text-right text-light">
+                  Status:
+                </label>
+                <div className="col-sm-6">
+                  <select name="status" className="form-control custom-dropdown">
+                    <option value="Planned">Planned</option>
+                    <option value="Watched">Watched</option>
+                    <option value="Favorite">Favorite</option>
+                  </select>
+                </div>
+              </div>
 
-            <div>
-              <button type="submit">Update Movie</button>
-              <button type="button" onClick={(e) => handleDelete(e, movie.watchlist_id)}>
-                Delete
-              </button>
-            </div>
+              <div className="form-group row justify-content-center">
+                <div className="col-sm-6 offset-sm-4">
+                  <button type="submit" className="btn btn-warning mr-2 w-100">
+                    Update Movie
+                  </button>
+                </div>
+              </div>
 
-            <br /><br />
-          </form>
-        ))
-      ) : (
-        <p>No movies found in your watchlist.</p>
-      )}
+              <div className="form-group row justify-content-center">
+                <div className="col-sm-6 offset-sm-4">
+                  <button
+                    type="button"
+                    className="btn custom-btn-danger w-100"
+                    onClick={(e) => handleDelete(e, movie.watchlist_id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </form>
+          ))
+        ) : (
+          <p className="text-warning">No movies found in your watchlist.</p>
+        )}
+      </div>
     </Layout>
   );
 }
+
+// Custom CSS applied inline for now
+const styles = `
+.custom-btn-danger {
+  background-color: #b30000; /* Slightly darker red */
+  color: #fff;
+}
+
+.custom-btn-danger:hover {
+  background-color: #990000; /* Darker red on hover */
+}
+
+.custom-dropdown {
+  background-color: #2c2c2c;  /* Dark background for the dropdown */
+  color: #fff;  /* White text for dropdown */
+}
+
+.custom-dropdown option {
+  color: #000; /* Default black text for dropdown options */
+}
+`;
+
+// Add the styles directly to the document head
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
 
 export default MovieWatchlist;

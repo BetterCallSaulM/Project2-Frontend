@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
+import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa'; // Import Font Awesome stars
 
 function MovieDetails() {
   const { id } = useParams();  // Get the movie ID from URL
@@ -36,109 +38,59 @@ function MovieDetails() {
 
   return (
     <Layout>
-      <div style={styles.container}>
-        <div style={styles.imageContainer}>
-          <img src={movie.poster} alt={movie.title} style={styles.poster} />
+      <div className="container my-5 d-flex flex-column flex-md-row align-items-center">
+        <div className="text-center mb-4 mb-md-0">
+          <img src={movie.poster} alt={movie.title} className="img-fluid rounded" style={{ maxWidth: '300px' }} />
         </div>
-        <div style={styles.detailsContainer}>
-          <h1>{movie.title}</h1>
+        <div className="mx-md-5">
+          <h1 className="text-warning">{movie.title}</h1>
           <p><strong>Director:</strong> {movie.director}</p>
           <p><strong>Genre:</strong> {movie.genre}</p>
           <p><strong>Year:</strong> {movie.year}</p>
           <p>{movie.description}</p>
 
           {/* Rating Section */}
-          <div style={styles.ratingContainer}>
+          <div className="my-3">
             <strong>Rating: </strong>
-            {[...Array(5)].map((_, index) => (
-              <span
-                key={index}
-                style={index < rating ? styles.starFilled : styles.star}
-                onClick={() => handleRatingClick(index + 1)}
-              >
-                &#9733;
-              </span>
-            ))}
+            {[...Array(5)].map((_, index) => {
+              const fullRating = index + 1;
+              const halfRating = index + 0.5;
+              return (
+                <span key={index} onClick={() => handleRatingClick(fullRating)} style={{ cursor: 'pointer' }}>
+                  {rating >= fullRating ? (
+                    <FaStar color="#ffcc00" />
+                  ) : rating >= halfRating ? (
+                    <FaStarHalfAlt color="#ffcc00" />
+                  ) : (
+                    <FaRegStar color="#ccc" />
+                  )}
+                </span>
+              );
+            })}
           </div>
 
           {/* Watchlist Section */}
-          <div>
-            <label htmlFor="category">Add to Watchlist: </label>
+          <div className="d-flex align-items-center">
+            <label htmlFor="category" className="me-2">Add to Watchlist:</label>
             <select 
               id="category" 
               value={category} 
               onChange={(e) => setCategory(e.target.value)}
-              style={styles.select}
+              className="form-select w-auto"
             >
               <option value="">--Select a Category--</option>
               <option value="Planned">Planned</option>
-              <option value="In Progress">In Progress</option>
+              <option value="In Progress">Favorite</option>
               <option value="Watched">Watched</option>
             </select>
-            <button onClick={handleAddToWatchlist} style={styles.button}>
-              Add to Watchlist
-            </button>
+            <button onClick={handleAddToWatchlist} className="btn btn-primary ms-2">Add</button>
           </div>
 
-          {successMessage && <p style={styles.successMessage}>{successMessage}</p>}
+          {successMessage && <p className="text-success mt-3">{successMessage}</p>}
         </div>
       </div>
     </Layout>
   );
 }
-
-// Styles
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '20px',
-    padding: '20px',
-  },
-  imageContainer: {
-    flex: 1,
-    textAlign: 'center',
-  },
-  poster: {
-    width: '300px',
-    borderRadius: '10px',
-  },
-  detailsContainer: {
-    flex: 1,
-    maxWidth: '400px',
-    textAlign: 'left',
-  },
-  select: {
-    marginLeft: '10px',
-    padding: '5px',
-  },
-  button: {
-    marginLeft: '10px',
-    padding: '5px 15px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-  successMessage: {
-    color: 'green',
-    marginTop: '10px',
-  },
-  ratingContainer: {
-    marginBottom: '15px',
-  },
-  star: {
-    fontSize: '25px',
-    cursor: 'pointer',
-    color: '#ccc',  // Empty star color
-  },
-  starFilled: {
-    fontSize: '25px',
-    cursor: 'pointer',
-    color: '#ffcc00',  // Filled star color
-  },
-};
 
 export default MovieDetails;

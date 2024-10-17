@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,8 +12,7 @@ function Search() {
       genre: "Sci-Fi",
       director: "The Wachowskis",
       year: 1999,
-      poster:  "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"
-  
+      poster: "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"
     },
     {
       id: 2,
@@ -49,11 +49,9 @@ function Search() {
   ]);
 
   const [filteredMovies, setFilteredMovies] = useState(movies);
-  const [selectedGenre, setSelectedGenre] = useState(''); // Store selected genre
-  const [displayedGenres, setDisplayedGenres] = useState({}); // Track which genres are showing "genre movies"
+  const [selectedGenre, setSelectedGenre] = useState('');
   const navigate = useNavigate();
 
-  // Update the title based on the selected genre or search term
   useEffect(() => {
     if (selectedGenre) {
       document.title = `${selectedGenre} movies`;
@@ -64,10 +62,9 @@ function Search() {
     }
   }, [selectedGenre, searchTerm]);
 
-  // Filter movies by search term
   const handleSearch = (e) => {
     e.preventDefault();
-    setSelectedGenre('');  // Clear selected genre when searching
+    setSelectedGenre('');
     const results = movies.filter(movie =>
       movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       movie.director.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -76,14 +73,9 @@ function Search() {
     setFilteredMovies(results);
   };
 
-  // Filter movies by genre (from the movie card buttons) and append "movies" to the genre
   const handleGenreClick = (genre) => {
-    setSearchTerm(''); // Clear search term when filtering by genre
+    setSearchTerm('');
     setSelectedGenre(genre);
-    setDisplayedGenres((prev) => ({
-      ...prev,
-      [genre]: true
-    }));
     const results = movies.filter(movie => movie.genre === genre);
     setFilteredMovies(results);
   };
@@ -94,88 +86,58 @@ function Search() {
 
   return (
     <Layout>
-      <div style={styles.container}>
-        <h1>{selectedGenre ? `${selectedGenre} movies` : searchTerm ? `Search results for "${searchTerm}"` : 'Search Movies'}</h1>
-        
+      <div className="container mt-5">
+        <h1 className="text-center mb-4 text-warning">
+          {selectedGenre ? `${selectedGenre} movies` : searchTerm ? `Search results for "${searchTerm}"` : 'Search Movies'}
+        </h1>
+
         {/* Search Form */}
-        <form onSubmit={handleSearch} style={styles.form}>
+        <form onSubmit={handleSearch} className="d-flex justify-content-center mb-4">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by title, director, or year..."
-            style={styles.searchInput}
+            className="form-control me-2"
+            style={{ maxWidth: '300px' }}
           />
-          <button type="submit" style={styles.searchButton}>Search</button>
+          <button type="submit" className="btn btn-warning">Search</button>
         </form>
 
-        {/* Movie List */}
-        <div style={styles.gridContainer}>
+        {/* Movie Cards */}
+        <div className="row">
           {filteredMovies.length > 0 ? (
             filteredMovies.map(movie => (
-              <div key={movie.id} style={styles.movieCard}>
-                <h3>{movie.title}</h3>
-                <p>Director: {movie.director}</p>
-                <p>Year: {movie.year}</p>
-                <button 
-                  onClick={() => handleGenreClick(movie.genre)} 
-                  style={{ padding: '10px', cursor: 'pointer', backgroundColor: movie.genre === selectedGenre  }}
-                >
-                  {movie.genre}
-                </button>
-                <img src={movie.poster} alt={movie.title} style={styles.poster} />
+              <div key={movie.id} className="col-sm-6 col-md-4 col-lg-3 mb-4">
+                <div className="card bg-dark text-white" style={{ maxWidth: '180px', margin: '0 auto' }}>
+                  <img src={movie.poster} alt={movie.title} className="card-img-top" style={{ height: '250px', objectFit: 'cover' }} />
+                  <div className="card-body">
+                    <h6 className="card-title">{movie.title}</h6>
+                    <p className="card-text"><small><strong>Director:</strong> {movie.director}</small></p>
+                    <p className="card-text"><small><strong>Year:</strong> {movie.year}</small></p>
+                    <button
+                      onClick={() => handleGenreClick(movie.genre)}
+                      className="btn btn-outline-warning btn-sm mb-2"
+                    >
+                      {movie.genre}
+                    </button>
+                    <button
+                      onClick={() => redirectToMovieInfo(movie.id)}
+                      className="btn btn-warning btn-sm"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
               </div>
             ))
           ) : (
-            <p>No movies found.</p>
+            <p className="text-center text-white">No movies found.</p>
           )}
         </div>
       </div>
     </Layout>
   );
 }
-
-const styles = {
-  container: {
-    textAlign: 'center',
-    padding: '20px',
-  },
-  form: {
-    marginBottom: '20px',
-  },
-  searchInput: {
-    padding: '10px',
-    width: '300px',
-    marginRight: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-  },
-  searchButton: {
-    padding: '10px 20px',
-    borderRadius: '5px',
-    border: 'none',
-    backgroundColor: '#007bff',
-    color: 'white',
-    cursor: 'pointer',
-  },
-  gridContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-    gap: '20px',
-    justifyItems: 'center',
-  },
-  movieCard: {
-    border: '1px solid #ddd',
-    borderRadius: '10px',
-    padding: '10px',
-    textAlign: 'center',
-    maxWidth: '200px',
-  },
-  poster: {
-    width: '150px',
-    borderRadius: '5px',
-    marginTop: '10px',
-  }
-};
 
 export default Search;
