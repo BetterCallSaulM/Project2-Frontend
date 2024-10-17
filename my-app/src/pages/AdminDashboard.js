@@ -169,7 +169,7 @@ const styles = {
     cursor: 'pointer',
   },
   buttonRed: {
-    backgroundColor: '#d9534f', // Darker red than default Bootstrap
+    backgroundColor: '#6c757d', // Darker red than default Bootstrap
     color: '#fff',
     border: 'none',
     borderRadius: '5px',

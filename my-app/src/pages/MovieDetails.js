@@ -83,7 +83,8 @@ function MovieDetails() {
               <option value="In Progress">Favorite</option>
               <option value="Watched">Watched</option>
             </select>
-            <button onClick={handleAddToWatchlist} className="btn btn-primary ms-2">Add</button>
+            <button onClick={handleAddToWatchlist} className="btn btn-primary ms-2
+             w-25">Add</button>
           </div>
 
           {successMessage && <p className="text-success mt-3">{successMessage}</p>}

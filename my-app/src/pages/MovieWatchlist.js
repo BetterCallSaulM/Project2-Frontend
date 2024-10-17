@@ -82,7 +82,7 @@ function MovieWatchlist() {
 
               <div className="form-group row justify-content-center">
                 <div className="col-sm-6 offset-sm-4">
-                  <button type="submit" className="btn btn-warning mr-2 w-100">
+                  <button type="submit" className="btn btn-warning mt-1 w-100">
                     Update Movie
                   </button>
                 </div>
@@ -92,7 +92,7 @@ function MovieWatchlist() {
                 <div className="col-sm-6 offset-sm-4">
                   <button
                     type="button"
-                    className="btn custom-btn-danger w-100"
+                    className="btn btn-secondary w-100 mt-1"
                     onClick={(e) => handleDelete(e, movie.watchlist_id)}
                   >
                     Delete
