@@ -9,6 +9,9 @@ function AddMovie() {
   const [genre, setGenre] = useState('');
   const [movieAdded, setMovieAdded] = useState(false); // State for confirmation message
 
+
+
+  
   const handleAddMovie = (e) => {
     e.preventDefault();
     const newMovie = {
