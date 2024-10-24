@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout'; 
 import LoginButton from '../components/login';
+import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -36,69 +37,41 @@ function Login() {
 
   return (
     <Layout>
-      <div style={styles.container}>
-        <h1>Login</h1>
-        <form onSubmit={handleLogin} style={styles.form}>
-          <div style={styles.formGroup}>
-            <label>Username:</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              style={styles.input}
-              required
-            />
+      <div className="container mt-5 d-flex justify-content-center">
+        <div className="col-md-6 bg-dark p-4 rounded shadow-sm">
+          <h1 className="text-center mb-4 text-warning">Login</h1> {/* Gold title */}
+          <form onSubmit={handleLogin}>
+            <div className="mb-3">
+              <label htmlFor="username" className="form-label text-light">Username</label> {/* Light text for labels */}
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="form-control bg-dark text-white border-light"  
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label text-light">Password</label> {/* Light text for labels */}
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-control bg-dark text-white border-light"  
+                required
+              />
+            </div>
+            <button type="submit" className="btn btn-warning w-100">Login</button>  {/* Gold button for consistency */}
+          </form>
+          <div className="mt-3 text-center">
+            <LoginButton />
           </div>
-          <div style={styles.formGroup}>
-            <label>Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={styles.input}
-              required
-            />
-          </div>
-          <button type="submit" style={styles.button}>Login</button>
-        </form>
-        <LoginButton />
+        </div>
       </div>
     </Layout>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: '400px',
-    margin: '0 auto',
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#fff',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px',
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  input: {
-    padding: '10px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-  },
-  button: {
-    padding: '10px 20px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-};
 
 export default Login;

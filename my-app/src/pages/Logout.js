@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from '../components/Layout'; 
+import Layout from '../components/Layout';
+import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap
 
 function LogoutConfirmation() {
   const navigate = useNavigate();
@@ -15,22 +16,19 @@ function LogoutConfirmation() {
 
   return (
     <Layout>
-      <div style={styles.container}>
-        <h1>Logout Confirmation</h1>
-        <p>You have successfully logged out. Redirecting to the homepage...</p>
+      <div className="container d-flex justify-content-center align-items-center" style={styles.fullHeight}>
+        <div className="text-center">
+          <h1 className="text-white mb-4">Logout Successful</h1>
+          <p className="text-white-50">You have successfully logged out. Redirecting to the homepage...</p>
+        </div>
       </div>
     </Layout>
   );
 }
 
 const styles = {
-  container: {
-    textAlign: 'center',
-    padding: '20px',
-    marginTop: '50px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#fff',
+  fullHeight: {
+    minHeight: '25vh',  // 25% of the viewport height
   }
 };
 

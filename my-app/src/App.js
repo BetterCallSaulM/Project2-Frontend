@@ -17,6 +17,12 @@ import LoginButton from './components/login.js';
 import { useEffect } from 'react';
 import { gapi } from 'gapi-script';
 
+// Import Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Import Bootstrap JS (includes Popper.js)
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 const clientId = "723447073505-5ph6b9rvg7h14j21tl0n5cua4dvl8cpa.apps.googleusercontent.com"
 
 function App() {
