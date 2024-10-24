@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import Layout from '../components/Layout'; 
+import Layout from '../components/Layout';
 
 function EditMovie() {
-  // Prepopulate with "The Dark Knight" data
   const [movieTitle, setMovieTitle] = useState('The Dark Knight');
   const [director, setDirector] = useState('Christopher Nolan');
   const [imageUrl, setImageUrl] = useState('https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg');
@@ -10,176 +9,107 @@ function EditMovie() {
   const [genre, setGenre] = useState('Action');
   const [year, setYear] = useState(2008);
 
-  const [savedMovie, setSavedMovie] = useState({
-    title: movieTitle,
-    director,
-    image: imageUrl,
-    description,
-    genre,
-    year,
-  });
-
   const handleEditMovie = (e) => {
     e.preventDefault();
-    setSavedMovie({
-      title: movieTitle,
-      director,
-      image: imageUrl,
-      description,
-      genre,
-      year,
-    });
-    console.log("Movie Edited:", savedMovie);
+    console.log("Movie Edited:", { movieTitle, director, imageUrl, description, genre, year });
   };
 
   return (
     <Layout>
-      <div style={styles.container}>
-        <div style={styles.formContainer}>
-          <h1>Edit Movie</h1>
-          <form onSubmit={handleEditMovie} style={styles.form}>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Movie Title</label>
-              <input 
-                type="text" 
-                value={movieTitle} 
-                onChange={(e) => setMovieTitle(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Director</label>
-              <input 
-                type="text" 
-                value={director} 
-                onChange={(e) => setDirector(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Image URL</label>
-              <input 
-                type="text" 
-                value={imageUrl} 
-                onChange={(e) => setImageUrl(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Description</label>
-              <textarea 
-                value={description} 
-                onChange={(e) => setDescription(e.target.value)} 
-                required 
-                style={styles.textarea}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Genre</label>
-              <input 
-                type="text" 
-                value={genre} 
-                onChange={(e) => setGenre(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Year</label>
-              <input 
-                type="number" 
-                value={year} 
-                onChange={(e) => setYear(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <button type="submit" style={styles.button}>Save Changes</button>
-          </form>
-        </div>
+      <div className="container my-3">
+        <div className="row">
+          {/* Edit Movie Form */}
+          <div className="col-lg-5 col-md-6 col-sm-8 col-12 bg-dark text-white p-3 rounded shadow-sm mx-auto">
+            <h2 className="text-center mb-3 text-warning" style={{ fontSize: '1.5rem' }}>Edit Movie</h2>
+            <form onSubmit={handleEditMovie}>
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: '0.9rem' }}>Movie Title</label>
+                <input
+                  type="text"
+                  value={movieTitle}
+                  onChange={(e) => setMovieTitle(e.target.value)}
+                  className="form-control bg-dark text-white border-secondary"
+                  required
+                  style={{ fontSize: '0.9rem' }}
+                />
+              </div>
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: '0.9rem' }}>Director</label>
+                <input
+                  type="text"
+                  value={director}
+                  onChange={(e) => setDirector(e.target.value)}
+                  className="form-control bg-dark text-white border-secondary"
+                  required
+                  style={{ fontSize: '0.9rem' }}
+                />
+              </div>
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: '0.9rem' }}>Image URL</label>
+                <input
+                  type="text"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  className="form-control bg-dark text-white border-secondary"
+                  required
+                  style={{ fontSize: '0.9rem' }}
+                />
+              </div>
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: '0.9rem' }}>Description</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="form-control bg-dark text-white border-secondary"
+                  required
+                  style={{ fontSize: '0.9rem' }}
+                />
+              </div>
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: '0.9rem' }}>Genre</label>
+                <input
+                  type="text"
+                  value={genre}
+                  onChange={(e) => setGenre(e.target.value)}
+                  className="form-control bg-dark text-white border-secondary"
+                  required
+                  style={{ fontSize: '0.9rem' }}
+                />
+              </div>
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: '0.9rem' }}>Year</label>
+                <input
+                  type="number"
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  className="form-control bg-dark text-white border-secondary"
+                  required
+                  style={{ fontSize: '0.9rem' }}
+                />
+              </div>
+              <button type="submit" className="btn btn-warning w-100" style={{ fontSize: '0.9rem' }}>Save Changes</button>
+            </form>
+          </div>
 
-        <div style={styles.movieDetails}>
-          <h2>Current Movie Info</h2>
-          <img 
-            src={savedMovie.image} 
-            alt={savedMovie.title} 
-            style={styles.poster}
-          />
-          <p><strong>Title:</strong> {savedMovie.title}</p>
-          <p><strong>Director:</strong> {savedMovie.director}</p>
-          <p><strong>Genre:</strong> {savedMovie.genre}</p>
-          <p><strong>Year:</strong> {savedMovie.year}</p>
-          <p><strong>Description:</strong> {savedMovie.description}</p>
+          {/* Current Movie Info */}
+          <div className="col-lg-5 col-md-6 col-sm-8 col-12 mt-4 mx-auto">
+            <h2 className="text-center mb-3 text-warning" style={{ fontSize: '1.5rem' }}>Current Movie Info</h2>
+            <img
+              src={imageUrl}
+              alt={movieTitle}
+              className="img-fluid rounded shadow mb-3"
+              style={{ maxHeight: '250px', objectFit: 'cover' }}
+            />
+            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Title:</strong> {movieTitle}</p>
+            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Director:</strong> {director}</p>
+            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Genre:</strong> {genre}</p>
+            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Year:</strong> {year}</p>
+            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Description:</strong> {description}</p>
+          </div>
         </div>
       </div>
     </Layout>
   );
 }
-
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    gap: '40px',
-    padding: '20px',
-  },
-  formContainer: {
-    flex: 1,
-    maxWidth: '500px',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px',
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  label: {
-    marginBottom: '5px',
-    fontSize: '16px',
-    color: '#333',
-  },
-  input: {
-    padding: '10px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-    width: '100%',
-    boxSizing: 'border-box',
-  },
-  textarea: {
-    padding: '10px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-    width: '100%',
-    height: '100px',
-    boxSizing: 'border-box',
-  },
-  button: {
-    padding: '10px 20px',
-    
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    marginTop: '20px',
-    width: '100%',
-  },
-  movieDetails: {
-    flex: 1,
-    maxWidth: '500px',
-  },
-  poster: {
-    width: '100%',
-    borderRadius: '8px',
-    marginBottom: '20px',
-  },
-};
 
 export default EditMovie;
