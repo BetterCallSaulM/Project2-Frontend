@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout, { buttonStyle } from '../components/Layout';  // Correctly import Layout and styles
 import { useNavigate } from 'react-router-dom';  // For navigation
 import 'bootstrap/dist/css/bootstrap.min.css';  // Ensure Bootstrap is imported
@@ -6,22 +6,58 @@ import 'bootstrap/dist/css/bootstrap.min.css';  // Ensure Bootstrap is imported
 function AdminDashboard() {
   const navigate = useNavigate();
 
-  const [users, setUsers] = useState([
-    { id: 1, name: 'Luis Ruiz', email: 'luis.ruiz@example.com', watchlist: [{ id: 101, title: 'The Matrix' }, { id: 102, title: 'Inception' }] },
-    { id: 2, name: 'Jane Doe', email: 'jane.doe@example.com', watchlist: [{ id: 103, title: 'The Dark Knight' }] },
-    { id: 3, name: 'John Smith', email: 'john.smith@example.com', watchlist: [{ id: 104, title: 'Pulp Fiction' }, { id: 105, title: 'Interstellar' }] }
-  ]);
+  const [users, setUsers] = useState([]);
 
-  const [movies, setMovies] = useState([
-    { id: 101, title: 'The Matrix', director: 'The Wachowskis' },
-    { id: 102, title: 'Inception', director: 'Christopher Nolan' },
-    { id: 103, title: 'The Dark Knight', director: 'Christopher Nolan' },
-    { id: 104, title: 'Pulp Fiction', director: 'Quentin Tarantino' },
-    { id: 105, title: 'Interstellar', director: 'Christopher Nolan' }
-  ]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('/Users/'); 
+        if (!response.ok) throw new Error('Failed to fetch users');
+        
+        const data = await response.json();
+        setUsers(data);
+        console.log(users);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
 
-  const deleteUser = (id) => {
-    setUsers(users.filter(user => user.id !== id));
+    fetchUsers();
+  }, []);
+
+  const [movies, setMovies] = useState([]);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await fetch('/Movies/'); 
+        if (!response.ok) throw new Error('Failed to fetch movies');
+        
+        const data = await response.json();
+        setMovies(data);
+      } catch (error) {
+        console.error('Error fetching movies:', error);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  const deleteUser = async (id) => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      try {
+        const response = await fetch(`/Users/${id}`, {
+          method: 'DELETE',
+        });
+  
+        if (!response.ok) throw new Error('Failed to delete user');
+  
+        // Update the local state to reflect the deletion
+        setUsers(users.filter(user => user.user_id !== id));
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
   };
 
   const deleteMovieFromUser = (userId, movieId) => {
@@ -49,6 +85,17 @@ function AdminDashboard() {
     navigate(`/edit-movie/${movieId}`);
   };
 
+  useEffect(() => {
+    console.log('Use effect')
+    let is_admin = sessionStorage.getItem('is_admin');
+    
+    if (is_admin === 'false') {
+      navigate('/dashboard');
+    } else if (is_admin === 'null') {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   return (
     <Layout>
       <div className="container my-5 d-flex flex-column align-items-center">
@@ -67,20 +114,18 @@ function AdminDashboard() {
             <table className="table table-dark table-bordered text-center mx-auto" style={styles.table}>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Name</th>
-                  <th>Email</th>
+                  <th>ID</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map(user => (
-                  <tr key={user.id}>
-                    <td>{user.id}</td>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
+                  <tr key={user.user_id}>
+                    <td>{user.username}</td>
+                    <td>{user.is_admin ? 'Yes' : 'No'}</td>
                     <td>
-                      <button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.id)} style={styles.buttonRed}>Delete User</button>
+                      <button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)} style={styles.buttonRed}>Delete User</button>
                     </td>
                   </tr>
                 ))}
@@ -95,8 +140,8 @@ function AdminDashboard() {
           {users.map(user => (
             <div key={user.id} className="d-flex justify-content-center mb-4">
               <div className="table-responsive" style={{ maxWidth: '700px' }}>
-                <h3 className="text-center">{user.name}'s Watchlist</h3>
-                {user.watchlist.length > 0 ? (
+                <h3 className="text-center">{user.username}'s Watchlist</h3>
+                {user.watchlist && user.watchlist.length > 0 ? (
                   <table className="table table-dark table-bordered text-center mx-auto" style={styles.table}>
                     <thead>
                       <tr>
