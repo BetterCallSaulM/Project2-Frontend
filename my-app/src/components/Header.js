@@ -56,7 +56,9 @@ const Header = () => {
                 </a>
                 {/* handleClick function prevents you from accessing the website if you are not logged in */}
                 <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="mainMenuDropdown" onClick={handleClick}>
-                  <li><Link to="/" className="dropdown-item">Home</Link></li>
+                  { !isUserLoggedIn && (
+                    <li><Link to="/" className="dropdown-item">Home</Link></li>
+                  )}
                   <li><Link to="/dashboard" className="dropdown-item">Dashboard</Link></li>
                   <li><Link to="/moviewatchlist" className="dropdown-item">Watchlist</Link></li>
                   <li><Link to="/add-movie" className="dropdown-item">Add Movie</Link></li>

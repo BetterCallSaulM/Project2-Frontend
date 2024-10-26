@@ -1,13 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import { useNavigate } from 'react-router-dom';
 
 function EditMovie() {
-  const [movieTitle, setMovieTitle] = useState('The Dark Knight');
-  const [director, setDirector] = useState('Christopher Nolan');
-  const [imageUrl, setImageUrl] = useState('https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg');
-  const [description, setDescription] = useState('Batman raises the stakes in his war on crime.');
-  const [genre, setGenre] = useState('Action');
-  const [year, setYear] = useState(2008);
+  const navigate = useNavigate();
+  const [movieTitle, setMovieTitle] = useState('');
+  const [director, setDirector] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
+  const [genre, setGenre] = useState('');
+  const [year, setYear] = useState(null);
+  const [topMovies, setTopMovies] = useState([]);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await fetch('/Movies/'); 
+        if (!response.ok) throw new Error('Failed to fetch movies');
+        
+        const data = await response.json();
+        setTopMovies(data);
+      } catch (error) {
+        console.error('Error fetching movies:', error);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  const editMovie = (movieId) => {
+    navigate(`/edit-movie/${movieId}`);
+  };
 
   const handleEditMovie = (e) => {
     e.preventDefault();
@@ -16,100 +39,52 @@ function EditMovie() {
 
   return (
     <Layout>
-      <div className="container my-3">
-        <div className="row">
-          {/* Edit Movie Form */}
-          <div className="col-lg-5 col-md-6 col-sm-8 col-12 bg-dark text-white p-3 rounded shadow-sm mx-auto">
-            <h2 className="text-center mb-3 text-warning" style={{ fontSize: '1.5rem' }}>Edit Movie</h2>
-            <form onSubmit={handleEditMovie}>
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: '0.9rem' }}>Movie Title</label>
-                <input
-                  type="text"
-                  value={movieTitle}
-                  onChange={(e) => setMovieTitle(e.target.value)}
-                  className="form-control bg-dark text-white border-secondary"
-                  required
-                  style={{ fontSize: '0.9rem' }}
-                />
-              </div>
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: '0.9rem' }}>Director</label>
-                <input
-                  type="text"
-                  value={director}
-                  onChange={(e) => setDirector(e.target.value)}
-                  className="form-control bg-dark text-white border-secondary"
-                  required
-                  style={{ fontSize: '0.9rem' }}
-                />
-              </div>
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: '0.9rem' }}>Image URL</label>
-                <input
-                  type="text"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  className="form-control bg-dark text-white border-secondary"
-                  required
-                  style={{ fontSize: '0.9rem' }}
-                />
-              </div>
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: '0.9rem' }}>Description</label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="form-control bg-dark text-white border-secondary"
-                  required
-                  style={{ fontSize: '0.9rem' }}
-                />
-              </div>
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: '0.9rem' }}>Genre</label>
-                <input
-                  type="text"
-                  value={genre}
-                  onChange={(e) => setGenre(e.target.value)}
-                  className="form-control bg-dark text-white border-secondary"
-                  required
-                  style={{ fontSize: '0.9rem' }}
-                />
-              </div>
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: '0.9rem' }}>Year</label>
-                <input
-                  type="number"
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                  className="form-control bg-dark text-white border-secondary"
-                  required
-                  style={{ fontSize: '0.9rem' }}
-                />
-              </div>
-              <button type="submit" className="btn btn-warning w-100" style={{ fontSize: '0.9rem' }}>Save Changes</button>
-            </form>
+      {/* Section for displaying the top movies in a clean grid format */}
+      <section style={styles.movieGrid}>
+        {topMovies.map(movie => (
+          <div key={movie.id} style={styles.movieCard}>
+            <img src={movie.poster} alt={movie.title} style={styles.poster} />
+            <h3>{movie.title}</h3>
+            <button className="btn btn-warning btn-sm me-2" onClick={() => editMovie(movie.title)} style={styles.buttonGold}>Edit</button>
           </div>
-
-          {/* Current Movie Info */}
-          <div className="col-lg-5 col-md-6 col-sm-8 col-12 mt-4 mx-auto">
-            <h2 className="text-center mb-3 text-warning" style={{ fontSize: '1.5rem' }}>Current Movie Info</h2>
-            <img
-              src={imageUrl}
-              alt={movieTitle}
-              className="img-fluid rounded shadow mb-3"
-              style={{ maxHeight: '250px', objectFit: 'cover' }}
-            />
-            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Title:</strong> {movieTitle}</p>
-            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Director:</strong> {director}</p>
-            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Genre:</strong> {genre}</p>
-            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Year:</strong> {year}</p>
-            <p className="text-white" style={{ fontSize: '0.9rem' }}><strong>Description:</strong> {description}</p>
-          </div>
-        </div>
-      </div>
+        ))}
+      </section>
     </Layout>
   );
 }
+
+// Minimal styling for a clean and modern look, using a dark and light contrast
+const styles = {
+  movieGrid: {
+    display: 'flex',
+    justifyContent: 'space-around',  // Evenly distribute movie cards
+    flexWrap: 'wrap',  // Ensure cards wrap on smaller screens
+    gap: '20px',  // Add space between movie cards
+  },
+  movieCard: {
+    backgroundColor: '#2c2c2c',  // Dark background for the cards
+    color: '#fff',  // White text for contrast
+    padding: '15px',
+    borderRadius: '8px',
+    textAlign: 'center',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',  // Soft shadow for depth
+    width: '200px',  // Consistent card width
+  },
+  poster: {
+    width: '100%',  // Ensure the poster fits the card width
+    height: 'auto',  // Maintain aspect ratio
+    borderRadius: '8px',  // Rounded edges for a smooth look
+    marginBottom: '10px',  // Space between poster and text
+  },
+  button: {
+    padding: '10px 20px',  // Comfortable button padding
+    backgroundColor: '#FFD700',  // Highlight button with gold color
+    color: '#2c2c2c',  // Dark text for readability
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',  // Pointer cursor for better UX
+    fontSize: '16px',
+  },
+};
 
 export default EditMovie;

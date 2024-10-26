@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import Layout, { buttonStyle } from '../components/Layout';  // Correctly import Layout and styles
+import Layout from '../components/Layout';  // Correctly import Layout and styles
 import { useNavigate } from 'react-router-dom';  // For navigation
 import 'bootstrap/dist/css/bootstrap.min.css';  // Ensure Bootstrap is imported
 
 function AdminDashboard() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const [userAdded, setUserAdded] = useState(false); // State for confirmation message
 
   const [movieTitle, setMovieTitle] = useState('');
-  const [year, setYear] = useState('');
+  const [year, setYear] = useState(null);
   const [director, setDirector] = useState('');
   const [poster, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
@@ -111,6 +112,7 @@ function AdminDashboard() {
     const newUser = {
       username: username,
       password: password,
+      is_admin: isAdmin,
     };
 
     try {
@@ -137,6 +139,7 @@ function AdminDashboard() {
     // Clear form after submission
     setUsername('');
     setPassword('');
+    setIsAdmin(false);
   };
 
   const handleAddMovie = async (e) => {
@@ -173,7 +176,7 @@ function AdminDashboard() {
     setMovieAdded(true);
     // Clear form after submission
     setMovieTitle('');
-    setYear('');
+    setYear(null);
     setDirector('');
     setImageUrl('');
     setDescription('');
@@ -197,11 +200,6 @@ function AdminDashboard() {
         <h1 className="text-center mb-4">Admin Dashboard</h1>
         <p className="text-center mb-4">Manage users, movies, and watchlists.</p>
 
-        {/* Add New Movie Button */}
-        <div className="d-flex justify-content-center mb-4">
-          <button className="btn btn-primary" onClick={addMovie} style={styles.buttonGold}>Add New Movie</button>
-        </div>
-
         {/* Users Table */}
         <div className="d-flex justify-content-center w-100 mb-4">
           <div className="table-responsive" style={{ maxWidth: '900px' }}>
@@ -210,7 +208,7 @@ function AdminDashboard() {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>ID</th>
+                  <th>Admin</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -281,11 +279,11 @@ function AdminDashboard() {
               <tbody>
                 {movies.map(movie => (
                   <tr key={movie.id}>
-                    <td>{movie.id}</td>
+                    <td>{movie.movie_id}</td>
                     <td>{movie.title}</td>
                     <td>{movie.director}</td>
                     <td>
-                      <button className="btn btn-warning btn-sm me-2" onClick={() => editMovie(movie.id)} style={styles.buttonGold}>Edit</button>
+                      <button className="btn btn-warning btn-sm me-2" onClick={() => editMovie(movie.title)} style={styles.buttonGold}>Edit</button>
                       <button className="btn btn-danger btn-sm" onClick={() => deleteMovie(movie.movie_id)} style={styles.buttonRed}>Delete</button>
                     </td>
                   </tr>
@@ -329,6 +327,31 @@ function AdminDashboard() {
                   className="form-control bg-dark text-white border-secondary"
                 />
               </div>
+              <div className="mb-3">
+                <label className="form-label">Admin Privileges</label>
+                <div className="form-check">
+                  <input
+                    type="radio"
+                    name="adminPrivileges"
+                    value="true"
+                    checked={isAdmin === true} // Assuming `isAdmin` is a boolean state variable
+                    onChange={() => setIsAdmin(true)}
+                    className="form-check-input"
+                  />
+                  <label className="form-check-label">Yes</label>
+                </div>
+                <div className="form-check">
+                  <input
+                    type="radio"
+                    name="adminPrivileges"
+                    value="false"
+                    checked={isAdmin === false}
+                    onChange={() => setIsAdmin(false)}
+                    className="form-check-input"
+                  />
+                  <label className="form-check-label">No</label>
+                </div>
+              </div>
               <button type="submit" className="btn btn-warning w-100 mt-3">Add User</button>
             </form>
           </div>
@@ -364,7 +387,6 @@ function AdminDashboard() {
                   type="number"
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
-                  required
                   className="form-control bg-dark text-white border-secondary"
                 />
               </div>
@@ -374,7 +396,6 @@ function AdminDashboard() {
                   type="text"
                   value={director}
                   onChange={(e) => setDirector(e.target.value)}
-                  required
                   className="form-control bg-dark text-white border-secondary"
                 />
               </div>
@@ -383,7 +404,6 @@ function AdminDashboard() {
                 <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                required
                 className="form-control bg-dark text-white border-secondary"
                 />
                 </div>
@@ -393,7 +413,6 @@ function AdminDashboard() {
                   type="text"
                   value={genre}
                   onChange={(e) => setGenre(e.target.value)}
-                  required
                   className="form-control bg-dark text-white border-secondary"
                 />
               </div>
@@ -403,7 +422,6 @@ function AdminDashboard() {
                     type="text"
                     value={poster}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    required
                     className="form-control bg-dark text-white border-secondary"
                   />
                 </div>

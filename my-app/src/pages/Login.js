@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout'; 
-import LoginButton from '../components/login';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Login() {
@@ -24,6 +23,7 @@ function Login() {
       const data = await response.json();
 
       if (response.ok && data.message === "Login successful") {
+        sessionStorage.setItem('user_id', data.user.user_id);
         sessionStorage.setItem('username', data.user.username);
         sessionStorage.setItem('password', data.user.password);
         sessionStorage.setItem('is_admin', data.user.is_admin);
@@ -66,9 +66,6 @@ function Login() {
             </div>
             <button type="submit" className="btn btn-warning w-100">Login</button>
           </form>
-          <div className="mt-3 text-center">
-            <LoginButton />
-          </div>
         </div>
       </div>
     </Layout>

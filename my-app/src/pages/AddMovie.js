@@ -3,15 +3,12 @@ import Layout from '../components/Layout';
 
 function AddMovie() {
   const [movieTitle, setMovieTitle] = useState('');
-  const [year, setYear] = useState('');
+  const [year, setYear] = useState(null);
   const [director, setDirector] = useState('');
   const [poster, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
   const [genre, setGenre] = useState('');
   const [movieAdded, setMovieAdded] = useState(false); // State for confirmation message
-
-
-
   
   const handleAddMovie = async (e) => {
     e.preventDefault();
@@ -47,7 +44,7 @@ function AddMovie() {
     setMovieAdded(true);
     // Clear form after submission
     setMovieTitle('');
-    setYear('');
+    setYear(null);
     setDirector('');
     setImageUrl('');
     setDescription('');
@@ -84,7 +81,6 @@ function AddMovie() {
                   type="number"
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
-                  required
                   className="form-control bg-dark text-white border-secondary"
                 />
               </div>
@@ -94,7 +90,6 @@ function AddMovie() {
                   type="text"
                   value={director}
                   onChange={(e) => setDirector(e.target.value)}
-                  required
                   className="form-control bg-dark text-white border-secondary"
                 />
               </div>
@@ -103,7 +98,6 @@ function AddMovie() {
                 <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                required
                 className="form-control bg-dark text-white border-secondary"
                 />
                 </div>
@@ -113,7 +107,6 @@ function AddMovie() {
                   type="text"
                   value={genre}
                   onChange={(e) => setGenre(e.target.value)}
-                  required
                   className="form-control bg-dark text-white border-secondary"
                 />
               </div>
@@ -123,7 +116,6 @@ function AddMovie() {
                     type="text"
                     value={poster}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    required
                     className="form-control bg-dark text-white border-secondary"
                   />
                 </div>
