@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap
 function UserProfile() {
   let username = sessionStorage.getItem('username');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const handleUpdateProfile = async (e) => {
@@ -19,21 +20,18 @@ function UserProfile() {
           'Content-Type': 'application/json',
         },
       });
-      console.log(response);
 
+      // Redirect to login after successful account deletion, otherwise gives appropiate error message
       if (response.status === 202) {
         navigate('/login');
+      } else if (response.status === 404) {
+        setMessage('Incorrect password');
+      } else if (response.status === 400) {
+        setMessage('Enter your password to confirm account deletion');
       }
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleLogout = () => {
-    sessionStorage.clear();
-    let username = sessionStorage.getItem('username');
-    console.log(username); // Prints null
-    navigate('/login');
   };
 
   return (
@@ -43,16 +41,6 @@ function UserProfile() {
           <div className="col-md-6 bg-dark text-white p-4 rounded shadow-sm">
             <h1 className="text-center mb-4 text-warning">Settings</h1>
             <form onSubmit={handleUpdateProfile}>
-              {/* <div className="mb-3">
-                <label htmlFor="username" className="form-label">Username</label>
-                <input 
-                  type="text" 
-                  id="username"
-                  value={username} 
-                  onChange={(e) => setUsername(e.target.value)} 
-                  className="form-control bg-dark text-white border-secondary"
-                />
-              </div> */}
               <div className="mb-3">
                 <label htmlFor="password" className="form-label">Enter Password</label>
                 <input 
@@ -65,7 +53,7 @@ function UserProfile() {
               </div>
               <button type="submit" className="btn btn-warning w-100 mt-3">Delete Profile</button>
             </form>
-            <button onClick={handleLogout} className="btn btn-secondary w-100 mt-3">Logout</button>
+            {message && <p className="mt-3 text-center text-light">{message}</p>}  {/* White/Gray feedback message */}
           </div>
         </div>
       </div>
