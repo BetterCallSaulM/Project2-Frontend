@@ -69,12 +69,21 @@ function AdminDashboard() {
     }));
   };
 
-  const deleteMovie = (movieId) => {
-    setMovies(movies.filter(movie => movie.id !== movieId));
-    setUsers(users.map(user => ({
-      ...user,
-      watchlist: user.watchlist.filter(movie => movie.id !== movieId)
-    })));
+  const deleteMovie = async (movieId) => {
+    if (window.confirm("Are you sure you want to delete this movie?")) {
+      try {
+        const response = await fetch(`/Movies/${movieId}`, {
+          method: 'DELETE',
+        });
+  
+        if (!response.ok) throw new Error('Failed to delete movie');
+  
+        // Update the local state to reflect the deletion
+        setMovies(movies.filter(movie => movie.movie_id !== movieId));
+      } catch (error) {
+        console.error('Error deleting movie:', error);
+      }
+    }
   };
 
   const addMovie = () => {
@@ -191,7 +200,7 @@ function AdminDashboard() {
                     <td>{movie.director}</td>
                     <td>
                       <button className="btn btn-warning btn-sm me-2" onClick={() => editMovie(movie.id)} style={styles.buttonGold}>Edit</button>
-                      <button className="btn btn-danger btn-sm" onClick={() => deleteMovie(movie.id)} style={styles.buttonRed}>Delete</button>
+                      <button className="btn btn-danger btn-sm" onClick={() => deleteMovie(movie.movie_id)} style={styles.buttonRed}>Delete</button>
                     </td>
                   </tr>
                 ))}
