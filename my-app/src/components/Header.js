@@ -59,7 +59,7 @@ const Header = () => {
                   <li><Link to="/add-movie" className="dropdown-item">Add Movie</Link></li>
                   <li><Link to="/edit-movie" className="dropdown-item">Edit Movie</Link></li>
 
-                  <li><Link to="/movie-details" className="dropdown-item">Movie Details</Link></li>
+                  
                   { is_admin === 'true' && (
                     <li><Link to="/admin" className="dropdown-item">Admin Dashboard</Link></li>
                   )}
