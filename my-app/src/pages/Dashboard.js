@@ -37,19 +37,7 @@ function Dashboard() {
           </div>
         ))}
       </section>
-
-      {/* Placeholder for personalized recommendations */}
-      <section>
-        <h2>Recommended for You</h2>
-        <p>Personalized movie recommendations based on your watchlist will appear here.</p>
-      </section>
-
-      {/* Profile management section */}
-      <section>
-        <h2>Your Profile</h2>
-        <p>Manage your account, update your information, and check your watchlist history.</p>
-        <button onClick={() => navigate('/profile')} style={styles.button}>Edit Profile</button>
-      </section>
+     
     </Layout>
   );
 }

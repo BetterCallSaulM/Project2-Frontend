@@ -56,13 +56,14 @@ const Header = () => {
                   <li><Link to="/" className="dropdown-item">Home</Link></li>
                   <li><Link to="/dashboard" className="dropdown-item">Dashboard</Link></li>
                   <li><Link to="/moviewatchlist" className="dropdown-item">Watchlist</Link></li>
-                  <li><Link to="/profile" className="dropdown-item">Profile</Link></li>
                   <li><Link to="/add-movie" className="dropdown-item">Add Movie</Link></li>
                   <li><Link to="/edit-movie" className="dropdown-item">Edit Movie</Link></li>
+
                   <li><Link to="/movie-details" className="dropdown-item">Movie Details</Link></li>
                   { is_admin === 'true' && (
                     <li><Link to="/admin" className="dropdown-item">Admin Dashboard</Link></li>
                   )}
+
                   <li><Link to="/search" className="dropdown-item">Search</Link></li>
                 </ul>
               </li>

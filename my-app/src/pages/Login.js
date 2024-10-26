@@ -9,8 +9,9 @@ function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
+
     
     try {
       // Pass username and password directly in the URL for a GET request
@@ -35,6 +36,7 @@ function Login() {
     } catch (error) {
       
      alert(`An error occurred, try again`);
+
     }
   };
 
