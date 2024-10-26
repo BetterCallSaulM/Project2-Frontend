@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { UserProvider } from './context/UserContext'; // Import UserProvider
+
 
 // Page components
 import Home from './pages/Home';
@@ -44,7 +44,7 @@ function App() {
   }, []);
 
   return (
-    <UserProvider> {/* Wrap the app in UserProvider */}
+    
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -63,7 +63,7 @@ function App() {
         </Routes>
         <LoginButton /> {/* LoginButton component outside of Routes */}
       </Router>
-    </UserProvider>
+ 
   );
 }
 
