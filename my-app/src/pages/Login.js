@@ -9,29 +9,13 @@ function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    
-    try {
-      // Pass username and password directly in the URL for a GET request
-      const requestUrl = `/Users/login/?username=${username}&password=${password}`;
-      const response = await fetch(requestUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok && data.message === "Login successful") {
-        navigate('/dashboard'); // Redirect to dashboard on successful login
-      } else {
-        alert('Invalid login credentials');
-      }
-    } catch (error) {
-      
-     alert(`An error occurred, try again`);
+    // Simple validation check (can be expanded for real authentication)
+    if (username === 'admin' && password === 'admin123') {
+      navigate('/dashboard'); // Redirect to dashboard on successful login
+    } else {
+      alert('Invalid login credentials');
     }
   };
 
