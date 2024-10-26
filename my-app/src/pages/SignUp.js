@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout'; 
-import axios from 'axios';
 import LoginButton from '../components/login';
 import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap
 
@@ -65,7 +64,7 @@ function SignUp() {
                 />
               </div>
               <button type="submit" className="btn btn-light w-100 mb-3">Sign Up</button>  {/* Add margin-bottom to Sign Up button */}
-</form>
+            </form>
             <LoginButton className="mt-3 p-2" />
             {message && <p className="mt-3 text-center text-light">{message}</p>}  {/* White/Gray feedback message */}
           </div>
