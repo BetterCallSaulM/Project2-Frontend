@@ -1,8 +1,27 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Header = () => {
+  const is_admin = sessionStorage.getItem('is_admin');
+  const username = sessionStorage.getItem('username');
+  const isUserLoggedIn = username && username !== 'null';
+  const navigate = useNavigate();
+
+  // Redirects you to login if you try to access website while not logged in
+  const handleClick = (event) => {
+    if (!isUserLoggedIn) {
+      navigate('/login');
+    }
+  }
+
+  // Clear session variables and redirect to login page
+  const handleLogout = (event) => {
+    sessionStorage.clear();
+    navigate('/login');
+  };
+
   return (
     <header className="bg-dark py-3">
       <nav className="navbar navbar-expand-lg navbar-dark">
@@ -35,15 +54,20 @@ const Header = () => {
                 >
                   Menu
                 </a>
-                <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="mainMenuDropdown">
+                {/* handleClick function prevents you from accessing the website if you are not logged in */}
+                <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="mainMenuDropdown" onClick={handleClick}>
                   <li><Link to="/" className="dropdown-item">Home</Link></li>
                   <li><Link to="/dashboard" className="dropdown-item">Dashboard</Link></li>
                   <li><Link to="/moviewatchlist" className="dropdown-item">Watchlist</Link></li>
-                  <li><Link to="/profile" className="dropdown-item">Profile</Link></li>
                   <li><Link to="/add-movie" className="dropdown-item">Add Movie</Link></li>
                   <li><Link to="/edit-movie" className="dropdown-item">Edit Movie</Link></li>
+
                   <li><Link to="/movie-details" className="dropdown-item">Movie Details</Link></li>
-                  <li><Link to="/admin" className="dropdown-item">Admin Dashboard</Link></li>
+                  {/* Admin dashboard only available if you are an admin user */}
+                  { is_admin === 'true' && (
+                    <li><Link to="/admin" className="dropdown-item">Admin Dashboard</Link></li>
+                  )}
+
                   <li><Link to="/search" className="dropdown-item">Search</Link></li>
                 </ul>
               </li>
@@ -63,9 +87,20 @@ const Header = () => {
                   Account
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="accountDropdown">
-                  <li><Link to="/login" className="dropdown-item">Login</Link></li>
-                  <li><Link to="/signup" className="dropdown-item">Sign Up</Link></li>
-                  <li><Link to="/logout" className="dropdown-item">Logout</Link></li>
+                  {/* Links only appear when user is not logged in */}
+                  { !isUserLoggedIn && (
+                    <>
+                      <li><Link to="/login" className="dropdown-item">Login</Link></li>
+                      <li><Link to="/signup" className="dropdown-item">Sign Up</Link></li>
+                    </>
+                  )}
+                  {/* Links only appear when user is logged in */}
+                  { isUserLoggedIn && (
+                    <>
+                      <li><Link to="/profile" className="dropdown-item">Settings</Link></li>
+                      <li><Link to="/logout" className="dropdown-item" onClick={handleLogout}>Logout</Link></li>
+                    </>
+                  )}
                 </ul>
               </li>
             </ul>

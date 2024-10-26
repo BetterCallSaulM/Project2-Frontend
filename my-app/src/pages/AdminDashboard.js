@@ -190,7 +190,7 @@ function AdminDashboard() {
       navigate('/login');
     }
   }, [navigate]);
-  
+
   return (
     <Layout>
       <div className="container my-5 d-flex flex-column align-items-center">

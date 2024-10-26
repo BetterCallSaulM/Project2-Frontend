@@ -9,8 +9,9 @@ function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
+
     
     try {
       // Pass username and password directly in the URL for a GET request
@@ -26,12 +27,16 @@ function Login() {
   
       if (response.ok && data.message === "Login successful") {
         navigate('/dashboard'); // Redirect to dashboard on successful login
+        sessionStorage.setItem('username', data.user.username);
+        sessionStorage.setItem('password', data.user.password);
+        sessionStorage.setItem('is_admin', data.user.is_admin);
       } else {
         alert('Invalid login credentials');
       }
     } catch (error) {
       
      alert(`An error occurred, try again`);
+
     }
   };
 
