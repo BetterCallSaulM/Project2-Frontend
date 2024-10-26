@@ -61,11 +61,13 @@ const Header = () => {
                   <li><Link to="/moviewatchlist" className="dropdown-item">Watchlist</Link></li>
                   <li><Link to="/add-movie" className="dropdown-item">Add Movie</Link></li>
                   <li><Link to="/edit-movie" className="dropdown-item">Edit Movie</Link></li>
+
                   <li><Link to="/movie-details" className="dropdown-item">Movie Details</Link></li>
                   {/* Admin dashboard only available if you are an admin user */}
                   { is_admin === 'true' && (
                     <li><Link to="/admin" className="dropdown-item">Admin Dashboard</Link></li>
                   )}
+
                   <li><Link to="/search" className="dropdown-item">Search</Link></li>
                 </ul>
               </li>
