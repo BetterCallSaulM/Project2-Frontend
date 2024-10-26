@@ -4,9 +4,8 @@ import axios from 'axios';
 import LoginButton from '../components/login';
 import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap
 
-function SignUp() {
-  const [name, setName] = useState('');      
-  const [email, setEmail] = useState('');    
+function SignUp() {   
+  const [username, setUsername] = useState('');    
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState(''); // State to store feedback messages
 
@@ -15,18 +14,21 @@ function SignUp() {
     e.preventDefault();  // Prevent form from refreshing the page
 
     try {
-      const response = await axios.post('/signup', {
-        name: name, 
-        email: email, 
-        password: password
+      const requestUrl = `/Users/newuser/?username=${username}&password=${password}`;
+      const response = await fetch(requestUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-
-      // Handle success
-      setMessage('Signup successful! Please log in.');
-      setName(''); 
-      setEmail(''); 
-      setPassword('');
-
+      
+      if (response['ok']) { // Successful API call
+        setMessage('Account created successfully! Please log in.')
+        setUsername(''); 
+        setPassword('');
+      } else { // API call failed (Email already in use)
+        setMessage('Account creation was unsuccessful. Email is already in use')
+      }
     } catch (error) {
       // Handle errors
       setMessage('Signup failed. Please try again.');
@@ -41,23 +43,12 @@ function SignUp() {
             <h1 className="text-center mb-4 text-warning">Sign Up</h1>
             <form onSubmit={insertRow}>
               <div className="mb-3">
-                <label htmlFor="name" className="form-label text-light">Name</label>  {/* Gray for labels */}
+                <label htmlFor="email" className="form-label text-light">Username</label>  {/* Gray for labels */}
                 <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="form-control bg-dark text-white border-light"  
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label text-light">Email</label>  {/* Gray for labels */}
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="username"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                   className="form-control bg-dark text-white border-light"  
                 />

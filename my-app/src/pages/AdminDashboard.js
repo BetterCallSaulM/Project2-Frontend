@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout, { buttonStyle } from '../components/Layout';  // Correctly import Layout and styles
 import { useNavigate } from 'react-router-dom';  // For navigation
 import 'bootstrap/dist/css/bootstrap.min.css';  // Ensure Bootstrap is imported
@@ -48,6 +48,17 @@ function AdminDashboard() {
   const editMovie = (movieId) => {
     navigate(`/edit-movie/${movieId}`);
   };
+
+  useEffect(() => {
+    console.log('Use effect')
+    let is_admin = sessionStorage.getItem('is_admin');
+    
+    if (is_admin === 'false') {
+      navigate('/dashboard');
+    } else if (is_admin === 'null') {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   return (
     <Layout>
