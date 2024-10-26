@@ -1,10 +1,27 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Header = () => {
+  const is_admin = sessionStorage.getItem('is_admin');
+  const username = sessionStorage.getItem('username');
+  const isUserLoggedIn = username && username !== 'null';
+  const navigate = useNavigate();
+
+  const handleClick = (event) => {
+    if (!isUserLoggedIn) {
+      navigate('/login');
+    }
+  }
+
+  const handleLogout = (event) => {
+    sessionStorage.clear();
+    navigate('/login');
+  };
+
   return (
-    <header className="bg-dark py-3">
+    <header className="bg-dark py-3" onClick={handleClick}>
       <nav className="navbar navbar-expand-lg navbar-dark">
         <div className="container">
           <Link className="navbar-brand text-warning" to="/">
@@ -43,7 +60,9 @@ const Header = () => {
                   <li><Link to="/add-movie" className="dropdown-item">Add Movie</Link></li>
                   <li><Link to="/edit-movie" className="dropdown-item">Edit Movie</Link></li>
                   <li><Link to="/movie-details" className="dropdown-item">Movie Details</Link></li>
-                  <li><Link to="/admin" className="dropdown-item">Admin Dashboard</Link></li>
+                  { is_admin === 'true' && (
+                    <li><Link to="/admin" className="dropdown-item">Admin Dashboard</Link></li>
+                  )}
                   <li><Link to="/search" className="dropdown-item">Search</Link></li>
                 </ul>
               </li>
@@ -63,9 +82,18 @@ const Header = () => {
                   Account
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="accountDropdown">
-                  <li><Link to="/login" className="dropdown-item">Login</Link></li>
-                  <li><Link to="/signup" className="dropdown-item">Sign Up</Link></li>
-                  <li><Link to="/logout" className="dropdown-item">Logout</Link></li>
+                  { !isUserLoggedIn && (
+                    <li><Link to="/login" className="dropdown-item">Login</Link></li>
+                  )}
+                  { !isUserLoggedIn && (
+                    <li><Link to="/signup" className="dropdown-item">Sign Up</Link></li>
+                  )}
+                  { isUserLoggedIn && (
+                    <>
+                      <li><Link to="/profile" className="dropdown-item">Settings</Link></li>
+                      <li><Link to="/logout" className="dropdown-item" onClick={handleLogout}>Logout</Link></li>
+                    </>
+                  )}
                 </ul>
               </li>
             </ul>

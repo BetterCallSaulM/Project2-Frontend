@@ -26,6 +26,9 @@ function Login() {
   
       if (response.ok && data.message === "Login successful") {
         navigate('/dashboard'); // Redirect to dashboard on successful login
+        sessionStorage.setItem('username', data.user.username);
+        sessionStorage.setItem('password', data.user.password);
+        sessionStorage.setItem('is_admin', data.user.is_admin);
       } else {
         alert('Invalid login credentials');
       }

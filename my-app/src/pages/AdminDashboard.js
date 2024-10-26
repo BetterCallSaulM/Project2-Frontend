@@ -85,6 +85,17 @@ function AdminDashboard() {
     navigate(`/edit-movie/${movieId}`);
   };
 
+  useEffect(() => {
+    console.log('Use effect')
+    let is_admin = sessionStorage.getItem('is_admin');
+    
+    if (is_admin === 'false') {
+      navigate('/dashboard');
+    } else if (is_admin === 'null') {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   return (
     <Layout>
       <div className="container my-5 d-flex flex-column align-items-center">
