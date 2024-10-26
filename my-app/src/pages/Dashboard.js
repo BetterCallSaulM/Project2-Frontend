@@ -1,52 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';  // Importing the Layout
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for navigation
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [topMovies, setTopMovies] = useState([
-    {
-      id: 1,
-      title: "The Matrix",
-      genre: "Sci-Fi",
-      director: "The Wachowskis",
-      year: 1999,
-      poster: "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"
-    },
-    {
-      id: 2,
-      title: "Inception",
-      genre: "Sci-Fi",
-      director: "Christopher Nolan",
-      year: 2010,
-      poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg"
-    },
-    {
-      id: 3,
-      title: "The Dark Knight",
-      genre: "Action",
-      director: "Christopher Nolan",
-      year: 2008,
-      poster: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
-    },
-    {
-      id: 4,
-      title: "Pulp Fiction",
-      genre: "Crime",
-      director: "Quentin Tarantino",
-      year: 1994,
-      poster: "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg"
-    },
-    {
-      id: 5,
-      title: "Interstellar",
-      genre: "Sci-Fi",
-      director: "Christopher Nolan",
-      year: 2014,
-      poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg"
-    }
-  ]);
+  const [topMovies, setTopMovies] = useState([]);
 
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await fetch('/Movies/'); 
+        if (!response.ok) throw new Error('Failed to fetch movies');
+        
+        const data = await response.json();
+        setTopMovies(data);
+      } catch (error) {
+        console.error('Error fetching movies:', error);
+      }
+    };
+
+    fetchMovies();
+  }, []);
   return (
     <Layout>
       <h1>Top Movies</h1>
