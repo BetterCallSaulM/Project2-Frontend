@@ -180,6 +180,17 @@ function AdminDashboard() {
     setGenre('');
   };
 
+  useEffect(() => {
+    console.log('Use effect')
+    let is_admin = sessionStorage.getItem('is_admin');
+    
+    if (is_admin === 'false') {
+      navigate('/dashboard');
+    } else if (is_admin === 'null') {
+      navigate('/login');
+    }
+  }, [navigate]);
+  
   return (
     <Layout>
       <div className="container my-5 d-flex flex-column align-items-center">
@@ -323,7 +334,7 @@ function AdminDashboard() {
           </div>
         </div>
       </div>
-      
+
       {/* Add Movie */}
       <div className="container mt-5">
         <div className="row justify-content-center">
