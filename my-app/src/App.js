@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { UserProvider } from './context/UserContext'; // Import UserProvider
 
 // Page components
 import Home from './pages/Home';
@@ -9,7 +8,6 @@ import MovieWatchlist from './pages/MovieWatchlist';
 import AddMovie from './pages/AddMovie';
 import EditMovie from './pages/EditMovie';
 import MovieDetails from './pages/MovieDetails';
-import UserProfile from './pages/UserProfile';
 import AdminDashboard from './pages/AdminDashboard';
 import Search from './pages/Search';
 import NotFound from './pages/NotFound';
@@ -44,26 +42,23 @@ function App() {
   }, []);
 
   return (
-    <UserProvider> {/* Wrap the app in UserProvider */}
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/moviewatchlist" element={<MovieWatchlist />} />
-          <Route path="/add-movie" element={<AddMovie />} />
-          <Route path="/edit-movie" element={<EditMovie />} />
-          <Route path="/movie/:id" element={<MovieDetails />} /> {/* Use dynamic route for movie details */}
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="*" element={<NotFound />} /> {/* Catch-all route for 404 */}
-        </Routes>
-        <LoginButton /> {/* LoginButton component outside of Routes */}
-      </Router>
-    </UserProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/moviewatchlist" element={<MovieWatchlist />} />
+        <Route path="/add-movie" element={<AddMovie />} />
+        <Route path="/edit-movie/:id" element={<EditMovie />} /> {/* Dynamic route for editing movie */}
+        <Route path="/movie/:id" element={<MovieDetails />} /> {/* Dynamic route for movie details */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="*" element={<NotFound />} /> {/* Catch-all route for 404 */}
+      </Routes>
+      <LoginButton /> {/* LoginButton component outside of Routes */}
+    </Router>
   );
 }
 
