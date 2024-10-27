@@ -4,7 +4,45 @@ import { useNavigate } from 'react-router-dom';  // Import useNavigate for navig
 
 function Dashboard() {
   const navigate = useNavigate();
+  const [userLists, setUserLists] = useState({Watchlists : []});
   const [topMovies, setTopMovies] = useState([]);
+  const [selectedWatchlist, setSelectedWatchlist] = useState("");
+
+  const user_id = sessionStorage.getItem('user_id');
+
+  const fetchWatchlists = async () => {
+    try {
+      const requestUrl = `/Watchlists/lists/?user=${user_id}`;
+      const response = await fetch(requestUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log(data);
+      setUserLists(data);
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+  const addToWatchList = async (id) => {
+    try {
+      const requestUrl = `/WatchlistMovies/add/?movie=${id}&watchlist=${selectedWatchlist}&status=Not%20Watched`;
+      const response = await fetch(requestUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log(data);
+      setUserLists(data);
+    } catch (error) {
+      alert(error);
+    }
+  }
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -20,6 +58,7 @@ function Dashboard() {
     };
 
     fetchMovies();
+    fetchWatchlists();
   }, []);
   return (
     <Layout>
@@ -34,6 +73,33 @@ function Dashboard() {
             <h3>{movie.title}</h3>
             <p>Year: {movie.year}</p>
             <p>Director: {movie.director}</p>
+            <form>
+              <select
+                value={selectedWatchlist}
+                onChange={(e) => setSelectedWatchlist(e.target.value)}
+              >
+                <option value="">Select a watchlist</option>
+                {userLists.Watchlists && userLists.Watchlists.length > 0 ? (
+                  userLists.Watchlists.map((watchlist) => (
+                    <option key={watchlist.watchlist_id} value={watchlist.watchlist_id}>
+                      {watchlist.watchlist_name}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>No watchlists available</option>
+                )}
+              </select>
+              <button
+                className="btn btn-warning mt-1 mb-5 w-80"
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent form submission
+                  addToWatchList(movie.movie_id);
+                }}
+                disabled={!selectedWatchlist} // Disable button if no watchlist is selected
+              >
+                Add to Watchlist
+              </button>
+            </form>
           </div>
         ))}
       </section>

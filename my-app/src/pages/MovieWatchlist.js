@@ -1,34 +1,135 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is imported
 
 function MovieWatchlist() {
-  // Simulated user movies and all available movies
-  const [userMovies, setUserMovies] = useState([
-    { id: 1, title: "The Matrix", status: "Favorite", watchlist_id: 1001 },
-    { id: 2, title: "Inception", status: "Planned", watchlist_id: 1002 },
-    { id: 3, title: "The Dark Knight", status: "Watched", watchlist_id: 1003 },
-  ]);
+  const [userLists, setUserLists] = useState({Watchlists : []});
+  const [allMovies, setAllMovies] = useState(null);
+  const [watchlistMovies, setWatchlistMovies] = useState([]);
+  const [listName, setListName] = useState('');
 
-  const allMovies = [
-    { movieId: 1, title: "The Matrix" },
-    { movieId: 2, title: "Inception" },
-    { movieId: 3, title: "The Dark Knight" },
-    { movieId: 4, title: "Pulp Fiction" },
-    { movieId: 5, title: "Interstellar" }
-  ];
+  const user_id = sessionStorage.getItem('user_id');
 
-  // Handle updating the movie details
-  const handleUpdate = (e, watchlistId) => {
-    e.preventDefault();
-    console.log("Movie updated for watchlistId:", watchlistId);
+  const fetchWatchlists = async () => {
+    try {
+      const requestUrl = `/Watchlists/lists/?user=${user_id}`;
+      const response = await fetch(requestUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setUserLists(data);
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+  const fetchAllMovies = async () => {
+    try {
+      const requestUrl = `/Movies/`;
+      const response = await fetch(requestUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setAllMovies(data);
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+  const fetchWatchlistMovies = async () => {
+    const movies = []; 
+    try {
+      for (let item of userLists.Watchlists) {
+        const requestUrl = `/WatchlistMovies/movies/?watchlist=${item.watchlist_id}`;
+        const response = await fetch(requestUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const data = await response.json();
+
+        if (data.Movies) {
+          movies.push(data.Movies)
+        }
+      }
+      setWatchlistMovies(movies);
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+  const createWatchList = async () => {
+    try {
+      const requestUrl = `/Watchlists/newlist/?name=${listName}&user=${user_id}`;
+      const response = await fetch(requestUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setListName('');
+    } catch (error) {
+      // alert(error);
+    }
+  }
+
+  const deleteWatchList = async (id) => {
+    try {
+      const requestUrl = `/Watchlists/delete/?watchlist=${id}`;
+      const response = await fetch(requestUrl, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+    } catch (error) {
+      // alert(error);
+    }
+  }
+
+  const deleteFromWatchList = async (id) => {
+    try {
+      const requestUrl = `/WatchlistMovies/delete/?id=${id}`;
+      const response = await fetch(requestUrl, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+    } catch (error) {
+      // alert(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchAllMovies();
+    fetchWatchlists();
+  }, []);
+
+  useEffect(() => {
+    if (userLists.Watchlists.length > 0) {
+      fetchWatchlistMovies();
+    }
+  }, [userLists]);
+
+  const getWatchlistName = (watchlistId) => {
+    const watchlist = userLists.Watchlists.find((wl) => wl.watchlist_id === watchlistId);
+    return watchlist? watchlist.watchlist_name : 'Unknown Watchlist';
   };
 
-  // Handle deleting the movie from the watchlist
-  const handleDelete = (e, watchlistId) => {
-    e.preventDefault();
-    setUserMovies(userMovies.filter(movie => movie.watchlist_id !== watchlistId));
-    console.log("Movie deleted from watchlistId:", watchlistId);
+  const getMovieTitle = (movieId) => {
+    const movie = allMovies.find((mv) => mv.movie_id === movieId);
+    return movie ? movie.title : 'Unknown Movie';
   };
 
   return (
@@ -36,74 +137,42 @@ function MovieWatchlist() {
       <div className="container mt-5 d-flex flex-column align-items-center">
         <h2 className="mb-4 text-center text-warning">Manage Your Watchlist</h2>
 
-        {userMovies && userMovies.length > 0 ? (
-          userMovies.map((movie) => (
-            <form
-              key={movie.watchlist_id}
-              onSubmit={(e) => handleUpdate(e, movie.watchlist_id)}
-              className="mb-4 w-75 bg-dark p-4 rounded"  // Dark background with padding and rounded corners
-            >
-              <div className="form-group row justify-content-center text-light">
-                <label className="col-sm-4 col-form-label text-right font-weight-bold">
-                  Title (Current):
-                </label>
-                <div className="col-sm-6">
-                  <p className="form-control-plaintext text-left">{movie.title}</p>
-                </div>
-              </div>
+        <div className='mb-4'>
+          <form>
+            <p>Watchlist Name: <input onChange={(e) => setListName(e.target.value)}></input></p>
+            <button className="btn btn-warning mt-1 w-100" onClick={createWatchList}>Add Watchlist</button>
+          </form>
+        </div>
 
-              <div className="form-group row justify-content-center">
-                <label htmlFor="movieId" className="col-sm-4 col-form-label text-right text-light">
-                  Change Movie:
-                </label>
-                <div className="col-sm-6">
-                  <select name="movieId" className="form-control custom-dropdown">
-                    {allMovies.map((m) => (
-                      <option key={m.movieId} value={m.movieId}>
-                        {m.title}
-                      </option>
+        <div className="container mt-5 d-flex flex-column align-items-center">
+          {userLists.Watchlists && userLists.Watchlists.length > 0 ? (
+            watchlistMovies.map((watchlistGroup, index) => (
+              <div key={index}>
+                <h3>{getWatchlistName(userLists.Watchlists[index].watchlist_id)}</h3>
+                {watchlistGroup.length > 0 ? (
+                  <div className="mb-5 mt-2">
+                    {watchlistGroup.map((movie) => (
+                      <div key={movie.id}>
+                        <p>Movie: {getMovieTitle(movie.movie_id)}</p>
+                        <p>Status: {movie.status}</p>
+                        <form onSubmit={(e) => { deleteFromWatchList(movie.id); }}>
+                          <button className="btn btn-warning mt-1 mb-5 w-80" type="submit">Remove Movie</button>
+                      </form>
+                      </div>
                     ))}
-                  </select>
-                </div>
+                  </div>
+                ) : (
+                  <p>No movies in this watchlist.</p>
+                )}
+                <form>
+                  <button className="btn btn-warning mb-5 w-100" onClick={() => deleteWatchList(userLists.Watchlists[index].watchlist_id)}>Delete Watchlist</button>
+                </form>
               </div>
-
-              <div className="form-group row justify-content-center">
-                <label htmlFor="status" className="col-sm-4 col-form-label text-right text-light">
-                  Status:
-                </label>
-                <div className="col-sm-6">
-                  <select name="status" className="form-control custom-dropdown">
-                    <option value="Planned">Planned</option>
-                    <option value="Watched">Watched</option>
-                    <option value="Favorite">Favorite</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-group row justify-content-center">
-                <div className="col-sm-6 offset-sm-4">
-                  <button type="submit" className="btn btn-warning mt-1 w-100">
-                    Update Movie
-                  </button>
-                </div>
-              </div>
-
-              <div className="form-group row justify-content-center">
-                <div className="col-sm-6 offset-sm-4">
-                  <button
-                    type="button"
-                    className="btn btn-secondary w-100 mt-1"
-                    onClick={(e) => handleDelete(e, movie.watchlist_id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </form>
-          ))
-        ) : (
-          <p className="text-warning">No movies found in your watchlist.</p>
-        )}
+            ))
+          ) : (
+            <p>No watchlists available. Please create a new watchlist!</p>
+          )}
+        </div>
       </div>
     </Layout>
   );
