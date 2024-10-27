@@ -15,7 +15,13 @@ function EditMovie() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch('/Movies/'); 
+        const requestUrl = `/Movies/`;
+        const response = await fetch(requestUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         if (!response.ok) throw new Error('Failed to fetch movies');
         
         const data = await response.json();
