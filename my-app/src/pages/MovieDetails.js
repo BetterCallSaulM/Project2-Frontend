@@ -52,18 +52,34 @@ function MovieDetails() {
     }));
   };
 
-  // Submit changes to the server
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Construct the request URL with updated fields
-    const requestUrl = `/Movies/edit/?name=${title}&` +
-      `title=${encodeURIComponent(formValues.title)}&` +
-      `director=${encodeURIComponent(formValues.director)}&` +
-      `genre=${encodeURIComponent(formValues.genre)}&` +
-      `year=${encodeURIComponent(formValues.year)}&` +
-      `description=${encodeURIComponent(formValues.description)}&` +
-      `poster=${encodeURIComponent(formValues.poster)}`;
+    const baseUrl = `/Movies/edit/?name=${encodeURIComponent(title)}`;
+    const queryParams = [];
+
+    // Add non-empty parameters to the queryParams array
+    if (formValues.title) {
+      queryParams.push(`title=${encodeURIComponent(formValues.title)}`);
+    }
+    if (formValues.director) {
+      queryParams.push(`director=${encodeURIComponent(formValues.director)}`);
+    }
+    if (formValues.genre) {
+      queryParams.push(`genre=${encodeURIComponent(formValues.genre)}`);
+    }
+    if (formValues.year) {
+      queryParams.push(`year=${encodeURIComponent(formValues.year)}`);
+    }
+    if (formValues.description) {
+      queryParams.push(`description=${encodeURIComponent(formValues.description)}`);
+    }
+    if (formValues.poster) {
+      queryParams.push(`poster=${encodeURIComponent(formValues.poster)}`);
+    }
+
+    const requestUrl = `${baseUrl}&${queryParams.join('&')}`;
 
     try {
       const response = await fetch(requestUrl, {
@@ -80,6 +96,7 @@ function MovieDetails() {
         throw new Error('Failed to update movie');
       }
     } catch (error) {
+      console.log(error);
       alert('Failed to update movie. Please try again later.');
     }
   };
