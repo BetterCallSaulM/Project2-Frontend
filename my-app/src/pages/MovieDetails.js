@@ -1,144 +1,133 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function MovieDetails() {
-  const { id } = useParams();  // Get the movie ID from URL
+  const { title } = useParams();
+  const navigate = useNavigate();
 
-  // Simulating "The Dark Knight" movie details
-  const movie = { 
-    id, 
-    title: "The Dark Knight", 
-    description: "Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations that plague the streets.", 
-    director: "Christopher Nolan",
-    genre: "Action",
-    year: 2008,
-    poster: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" 
-  };
+  const [movie, setMovie] = useState(null);
+  const [formValues, setFormValues] = useState({
+    title: '',
+    director: '',
+    genre: '',
+    year: '',
+    description: '',
+    poster: ''
+  });
+  const [message, setMessage] = useState({ text: '', type: '' });
 
-  const [category, setCategory] = useState('');  // Store the selected category
-  const [successMessage, setSuccessMessage] = useState('');  // Success notification
-  const [rating, setRating] = useState(0);  // Store the rating
+  const fetchMovie = async () => {
+    try {
+      const response = await fetch(`/Movies/movie/?name=${title}`);
+      if (!response.ok) throw new Error('Failed to fetch movie details');
 
-  const handleAddToWatchlist = () => {
-    if (category) {
-      console.log(`Added ${movie.title} to watchlist under "${category}"`);
-      setSuccessMessage(`"${movie.title}" added to your watchlist under "${category}"!`);
-      setCategory('');  // Reset category after adding
-    } else {
-      setSuccessMessage('Please select a category first.');
+      const data = await response.json();
+      setMovie(data.movie);
+      setFormValues({
+        title: data.movie.title || '',
+        director: data.movie.director || '',
+        genre: data.movie.genre || '',
+        year: data.movie.year || '',
+        description: data.movie.description || '',
+        poster: data.movie.poster || ''
+      });
+    } catch (error) {
+      setMessage({ text: 'Error fetching movie details. Please try again later.', type: 'error' });
     }
   };
 
-  const handleRatingClick = (value) => {
-    setRating(value);  // Set the selected rating
+  // Fetch movie details when the component loads
+  useEffect(() => {
+    fetchMovie();
+  }, [title]);
+
+  // Handle form field changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value
+    }));
   };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const baseUrl = `/Movies/edit/?name=${encodeURIComponent(title)}`;
+    const queryParams = [];
+
+    // Add non-empty parameters to the queryParams array
+    if (formValues.title) {
+      queryParams.push(`title=${encodeURIComponent(formValues.title)}`);
+    }
+    if (formValues.director) {
+      queryParams.push(`director=${encodeURIComponent(formValues.director)}`);
+    }
+    if (formValues.genre) {
+      queryParams.push(`genre=${encodeURIComponent(formValues.genre)}`);
+    }
+    if (formValues.year) {
+      queryParams.push(`year=${encodeURIComponent(formValues.year)}`);
+    }
+    if (formValues.description) {
+      queryParams.push(`description=${encodeURIComponent(formValues.description)}`);
+    }
+    if (formValues.poster) {
+      queryParams.push(`poster=${encodeURIComponent(formValues.poster)}`);
+    }
+
+    const requestUrl = `${baseUrl}&${queryParams.join('&')}`;
+
+    try {
+      const response = await fetch(requestUrl, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        const updatedTitle = formValues.title || movie.title;
+        alert(`"${updatedTitle}" has been successfully updated.`);
+        setMovie((prevMovie) => ({ ...prevMovie, ...formValues }));
+        navigate(`/Dashboard`);
+      } else {
+        throw new Error('Failed to update movie');
+      }
+    } catch (error) {
+      console.log(error);
+      alert('Failed to update movie. Please try again later.');
+    }
+  };
+
+  if (!movie) {
+    return (
+      <Layout>
+        <div className="container my-5">
+          <p className="text-center text-white">Loading movie details...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      <div style={styles.container}>
-        <div style={styles.imageContainer}>
-          <img src={movie.poster} alt={movie.title} style={styles.poster} />
-        </div>
-        <div style={styles.detailsContainer}>
-          <h1>{movie.title}</h1>
-          <p><strong>Director:</strong> {movie.director}</p>
-          <p><strong>Genre:</strong> {movie.genre}</p>
-          <p><strong>Year:</strong> {movie.year}</p>
-          <p>{movie.description}</p>
-
-          {/* Rating Section */}
-          <div style={styles.ratingContainer}>
-            <strong>Rating: </strong>
-            {[...Array(5)].map((_, index) => (
-              <span
-                key={index}
-                style={index < rating ? styles.starFilled : styles.star}
-                onClick={() => handleRatingClick(index + 1)}
-              >
-                &#9733;
-              </span>
-            ))}
-          </div>
-
-          {/* Watchlist Section */}
-          <div>
-            <label htmlFor="category">Add to Watchlist: </label>
-            <select 
-              id="category" 
-              value={category} 
-              onChange={(e) => setCategory(e.target.value)}
-              style={styles.select}
-            >
-              <option value="">--Select a Category--</option>
-              <option value="Planned">Planned</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Watched">Watched</option>
-            </select>
-            <button onClick={handleAddToWatchlist} style={styles.button}>
-              Add to Watchlist
-            </button>
-          </div>
-
-          {successMessage && <p style={styles.successMessage}>{successMessage}</p>}
+      <div className="container my-5 d-flex flex-column flex-md-row align-items-center text-center">
+        <div className="mx-md-5 text-center">
+          <form onSubmit={handleSubmit}>
+            <p><strong>Title: </strong> <input name="title" value={formValues.title} onChange={handleChange} /></p>
+            <p><strong>Director: </strong> <input name="director" value={formValues.director} onChange={handleChange} /></p>
+            <p><strong>Genre: </strong> <input name="genre" value={formValues.genre} onChange={handleChange} /></p>
+            <p><strong>Year: </strong> <input type="number" name="year" value={formValues.year} onChange={handleChange} /></p>
+            <p><strong>Description: </strong> <textarea name="description" value={formValues.description} onChange={handleChange} /></p>
+            <p><strong>Poster URL: </strong> <input name="poster" value={formValues.poster} onChange={handleChange} /></p>
+            <button type="submit" className="btn btn-primary ms-2 w-25">Update</button>
+          </form>
         </div>
       </div>
     </Layout>
   );
 }
-
-// Styles
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '20px',
-    padding: '20px',
-  },
-  imageContainer: {
-    flex: 1,
-    textAlign: 'center',
-  },
-  poster: {
-    width: '300px',
-    borderRadius: '10px',
-  },
-  detailsContainer: {
-    flex: 1,
-    maxWidth: '400px',
-    textAlign: 'left',
-  },
-  select: {
-    marginLeft: '10px',
-    padding: '5px',
-  },
-  button: {
-    marginLeft: '10px',
-    padding: '5px 15px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-  successMessage: {
-    color: 'green',
-    marginTop: '10px',
-  },
-  ratingContainer: {
-    marginBottom: '15px',
-  },
-  star: {
-    fontSize: '25px',
-    cursor: 'pointer',
-    color: '#ccc',  // Empty star color
-  },
-  starFilled: {
-    fontSize: '25px',
-    cursor: 'pointer',
-    color: '#ffcc00',  // Filled star color
-  },
-};
 
 export default MovieDetails;

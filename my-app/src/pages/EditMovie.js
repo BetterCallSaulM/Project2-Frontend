@@ -1,184 +1,95 @@
-import React, { useState } from 'react';
-import Layout from '../components/Layout'; 
+import React, { useState, useEffect } from 'react';
+import Layout from '../components/Layout';
+import { useNavigate } from 'react-router-dom';
 
 function EditMovie() {
-  // Prepopulate with "The Dark Knight" data
-  const [movieTitle, setMovieTitle] = useState('The Dark Knight');
-  const [director, setDirector] = useState('Christopher Nolan');
-  const [imageUrl, setImageUrl] = useState('https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg');
-  const [description, setDescription] = useState('Batman raises the stakes in his war on crime.');
-  const [genre, setGenre] = useState('Action');
-  const [year, setYear] = useState(2008);
+  const navigate = useNavigate();
+  const [movieTitle, setMovieTitle] = useState('');
+  const [director, setDirector] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
+  const [genre, setGenre] = useState('');
+  const [year, setYear] = useState(null);
+  const [topMovies, setTopMovies] = useState([]);
 
-  const [savedMovie, setSavedMovie] = useState({
-    title: movieTitle,
-    director,
-    image: imageUrl,
-    description,
-    genre,
-    year,
-  });
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const requestUrl = `/Movies/`;
+        const response = await fetch(requestUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) throw new Error('Failed to fetch movies');
+        
+        const data = await response.json();
+        setTopMovies(data);
+      } catch (error) {
+        console.error('Error fetching movies:', error);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  const editMovie = (movieId) => {
+    navigate(`/edit-movie/${movieId}`);
+  };
 
   const handleEditMovie = (e) => {
     e.preventDefault();
-    setSavedMovie({
-      title: movieTitle,
-      director,
-      image: imageUrl,
-      description,
-      genre,
-      year,
-    });
-    console.log("Movie Edited:", savedMovie);
+    console.log("Movie Edited:", { movieTitle, director, imageUrl, description, genre, year });
   };
 
   return (
     <Layout>
-      <div style={styles.container}>
-        <div style={styles.formContainer}>
-          <h1>Edit Movie</h1>
-          <form onSubmit={handleEditMovie} style={styles.form}>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Movie Title</label>
-              <input 
-                type="text" 
-                value={movieTitle} 
-                onChange={(e) => setMovieTitle(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Director</label>
-              <input 
-                type="text" 
-                value={director} 
-                onChange={(e) => setDirector(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Image URL</label>
-              <input 
-                type="text" 
-                value={imageUrl} 
-                onChange={(e) => setImageUrl(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Description</label>
-              <textarea 
-                value={description} 
-                onChange={(e) => setDescription(e.target.value)} 
-                required 
-                style={styles.textarea}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Genre</label>
-              <input 
-                type="text" 
-                value={genre} 
-                onChange={(e) => setGenre(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Year</label>
-              <input 
-                type="number" 
-                value={year} 
-                onChange={(e) => setYear(e.target.value)} 
-                required 
-                style={styles.input}
-              />
-            </div>
-            <button type="submit" style={styles.button}>Save Changes</button>
-          </form>
-        </div>
-
-        <div style={styles.movieDetails}>
-          <h2>Current Movie Info</h2>
-          <img 
-            src={savedMovie.image} 
-            alt={savedMovie.title} 
-            style={styles.poster}
-          />
-          <p><strong>Title:</strong> {savedMovie.title}</p>
-          <p><strong>Director:</strong> {savedMovie.director}</p>
-          <p><strong>Genre:</strong> {savedMovie.genre}</p>
-          <p><strong>Year:</strong> {savedMovie.year}</p>
-          <p><strong>Description:</strong> {savedMovie.description}</p>
-        </div>
-      </div>
+      {/* Section for displaying the top movies in a clean grid format */}
+      <section style={styles.movieGrid}>
+        {topMovies.map(movie => (
+          <div key={movie.id} style={styles.movieCard}>
+            <img src={movie.poster} alt={movie.title} style={styles.poster} />
+            <h3>{movie.title}</h3>
+            <button className="btn btn-warning btn-sm me-2" onClick={() => editMovie(movie.title)} style={styles.buttonGold}>Edit</button>
+          </div>
+        ))}
+      </section>
     </Layout>
   );
 }
 
+// Minimal styling for a clean and modern look, using a dark and light contrast
 const styles = {
-  container: {
+  movieGrid: {
     display: 'flex',
-    justifyContent: 'space-between',
-    gap: '40px',
-    padding: '20px',
+    justifyContent: 'space-around',  // Evenly distribute movie cards
+    flexWrap: 'wrap',  // Ensure cards wrap on smaller screens
+    gap: '20px',  // Add space between movie cards
   },
-  formContainer: {
-    flex: 1,
-    maxWidth: '500px',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px',
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  label: {
-    marginBottom: '5px',
-    fontSize: '16px',
-    color: '#333',
-  },
-  input: {
-    padding: '10px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-    width: '100%',
-    boxSizing: 'border-box',
-  },
-  textarea: {
-    padding: '10px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-    width: '100%',
-    height: '100px',
-    boxSizing: 'border-box',
-  },
-  button: {
-    padding: '10px 20px',
-    
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    marginTop: '20px',
-    width: '100%',
-  },
-  movieDetails: {
-    flex: 1,
-    maxWidth: '500px',
+  movieCard: {
+    backgroundColor: '#2c2c2c',  // Dark background for the cards
+    color: '#fff',  // White text for contrast
+    padding: '15px',
+    borderRadius: '8px',
+    textAlign: 'center',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',  // Soft shadow for depth
+    width: '200px',  // Consistent card width
   },
   poster: {
-    width: '100%',
-    borderRadius: '8px',
-    marginBottom: '20px',
+    width: '100%',  // Ensure the poster fits the card width
+    height: 'auto',  // Maintain aspect ratio
+    borderRadius: '8px',  // Rounded edges for a smooth look
+    marginBottom: '10px',  // Space between poster and text
+  },
+  button: {
+    padding: '10px 20px',  // Comfortable button padding
+    backgroundColor: '#FFD700',  // Highlight button with gold color
+    color: '#2c2c2c',  // Dark text for readability
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',  // Pointer cursor for better UX
+    fontSize: '16px',
   },
 };
 

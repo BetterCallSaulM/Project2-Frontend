@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout'; 
-import axios from 'axios';
 import LoginButton from '../components/login';
+import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap
 
-function SignUp() {
-  const [name, setName] = useState('');      
-  const [email, setEmail] = useState('');    
+function SignUp() {   
+  const [username, setUsername] = useState('');    
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState(''); // State to store feedback messages
 
@@ -14,18 +13,21 @@ function SignUp() {
     e.preventDefault();  // Prevent form from refreshing the page
 
     try {
-      const response = await axios.post('/signup', {
-        name: name, 
-        email: email, 
-        password: password
+      const requestUrl = `/Users/newuser/?username=${username}&password=${password}`;
+      const response = await fetch(requestUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-
-      // Handle success
-      setMessage('Signup successful! Please log in.');
-      setName(''); 
-      setEmail(''); 
-      setPassword('');
-
+      
+      if (response['ok']) { // Successful API call
+        setMessage('Account created successfully! Please log in.')
+        setUsername(''); 
+        setPassword('');
+      } else { // API call failed (Email already in use)
+        setMessage('Account creation was unsuccessful. Email is already in use')
+      }
     } catch (error) {
       // Handle errors
       setMessage('Signup failed. Please try again.');
@@ -34,88 +36,42 @@ function SignUp() {
 
   return (
     <Layout>
-      <div style={styles.container}>
-        <h1>Sign Up</h1>
-        <form onSubmit={insertRow} style={styles.form}>
-          <div style={styles.formGroup}>
-            <label htmlFor="name">Name:</label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              style={styles.input}
-            />
+      <div className="container my-5">
+        <div className="row justify-content-center">
+          <div className="col-md-6 bg-dark p-4 rounded shadow-sm">
+            <h1 className="text-center mb-4 text-warning">Sign Up</h1>
+            <form onSubmit={insertRow}>
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label text-light">Username</label>  {/* Gray for labels */}
+                <input
+                  type="username"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="form-control bg-dark text-white border-light"  
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label text-light">Password</label>  {/* Gray for labels */}
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="form-control bg-dark text-white border-light"  
+                />
+              </div>
+              <button type="submit" className="btn btn-light w-100 mb-3">Sign Up</button>  {/* Add margin-bottom to Sign Up button */}
+            </form>
+            <LoginButton className="mt-3 p-2" />
+            {message && <p className="mt-3 text-center text-light">{message}</p>}  {/* White/Gray feedback message */}
           </div>
-          <div style={styles.formGroup}>
-            <label htmlFor="email">Email:</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={styles.input}
-            />
-          </div>
-          <div style={styles.formGroup}>
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={styles.input}
-            />
-          </div>
-          <button type="submit" style={styles.submitButton}>Sign Up</button>
-        </form>
-        <LoginButton />
-        {message && <p style={styles.message}>{message}</p>} {/* Display feedback message */}
+        </div>
       </div>
     </Layout>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: '500px',
-    margin: '0 auto',
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#fff',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px',
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  input: {
-    padding: '10px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-  },
-  submitButton: {
-    padding: '10px 20px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-  message: {
-    marginTop: '20px',
-    fontSize: '14px',
-    color: 'green',
-  },
-};
 
 export default SignUp;

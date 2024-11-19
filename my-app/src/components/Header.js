@@ -1,90 +1,116 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-// Styles for header and navigation
-const styles = {
-  header: {
-    backgroundColor: '#2c2c2c',
-    padding: '10px',
-    display: 'flex',
-    justifyContent: 'space-between', // Spread items to left and right
-    alignItems: 'center',
-  },
-  nav: {
-    display: 'flex',
-    justifyContent: 'center', // Center the main navigation links
-    flexGrow: 1, // Allow the nav to take up the middle space
-  },
-  ul: {
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    display: 'flex',
-    gap: '20px',
-  },
-  li: {
-    display: 'inline',
-  },
-  link: {
-    color: '#FFD700', // Gold color for links
-    textDecoration: 'none',
-    fontSize: '18px',
-    fontWeight: 'bold',
-  },
-  activeLink: {
-    color: '#FF6347', // Active link highlighted in red
-  },
-  auth: {
-    display: 'flex',
-    gap: '15px', // Space between auth links
-  },
-};
+const Header = () => {
+  const is_admin = sessionStorage.getItem('is_admin');
+  const username = sessionStorage.getItem('username');
+  const isUserLoggedIn = username && username !== 'null';
+  const navigate = useNavigate();
 
-const links = [
-  { path: '/', label: 'Home' },
-  { path: '/dashboard', label: 'Dashboard' },
-  { path: '/moviewatchlist', label: 'Watchlist' },
-  { path: '/profile', label: 'Profile' },
-  { path: '/add-movie', label: 'Add Movie' },
-  { path: '/edit-movie', label: 'Edit Movie' },
-  { path: '/movie-details', label: 'Movie Details' },
-  { path: '/admin', label: 'Admin Dashboard' },
-  { path: '/search', label: 'Search' },
-];
+  // Redirects you to login if you try to access website while not logged in
+  const handleClick = (event) => {
+    if (!isUserLoggedIn) {
+      navigate('/login');
+    }
+  }
 
-const authLinks = [
-  { path: '/login', label: 'Login' },
-  { path: '/signup', label: 'Sign Up' },
-  { path: '/logout', label: 'Logout' },
-];
-
-function Header() {
-  const location = useLocation(); // Get the current location
-
-  // Function to generate list items for navigation
-  const renderNavLink = (path, label) => (
-    <li style={styles.li} key={path}>
-      <Link to={path} style={location.pathname === path ? styles.activeLink : styles.link}>
-        {label}
-      </Link>
-    </li>
-  );
+  // Clear session variables and redirect to login page
+  const handleLogout = (event) => {
+    sessionStorage.clear();
+    navigate('/login');
+  };
 
   return (
-    <header style={styles.header}>
-      {/* Main navigation links */}
-      <nav style={styles.nav}>
-        <ul style={styles.ul}>
-          {links.map(({ path, label }) => renderNavLink(path, label))}
-        </ul>
-      </nav>
+    <header className="bg-dark py-3">
+      <nav className="navbar navbar-expand-lg navbar-dark">
+        <div className="container">
+          <Link className="navbar-brand text-warning" to="/">
+            Movie Wishlist
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              {/* Main Menu Dropdown */}
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle text-warning"
+                  href="#"
+                  id="mainMenuDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Menu
+                </a>
+                {/* handleClick function prevents you from accessing the website if you are not logged in */}
+                <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="mainMenuDropdown" onClick={handleClick}>
+                  { !isUserLoggedIn && (
+                    <li><Link to="/" className="dropdown-item">Home</Link></li>
+                  )}
+                  <li><Link to="/dashboard" className="dropdown-item">Dashboard</Link></li>
+                  <li><Link to="/moviewatchlist" className="dropdown-item">Watchlist</Link></li>
+                  <li><Link to="/add-movie" className="dropdown-item">Add Movie</Link></li>
+                  <li><Link to="/edit-movie" className="dropdown-item">Edit Movie</Link></li>
 
-      {/* Authentication-related links (aligned to the right) */}
-      <div style={styles.auth}>
-        {authLinks.map(({ path, label }) => renderNavLink(path, label))}
-      </div>
+                  <li><Link to="/movie-details" className="dropdown-item">Movie Details</Link></li>
+                  {/* Admin dashboard only available if you are an admin user */}
+                  { is_admin === 'true' && (
+                    <li><Link to="/admin" className="dropdown-item">Admin Dashboard</Link></li>
+                  )}
+
+                  <li><Link to="/search" className="dropdown-item">Search</Link></li>
+                </ul>
+              </li>
+            </ul>
+
+            {/* Account Dropdown */}
+            <ul className="navbar-nav">
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle text-warning"
+                  href="#"
+                  id="accountDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Account
+                </a>
+                <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="accountDropdown">
+                  {/* Links only appear when user is not logged in */}
+                  { !isUserLoggedIn && (
+                    <>
+                      <li><Link to="/login" className="dropdown-item">Login</Link></li>
+                      <li><Link to="/signup" className="dropdown-item">Sign Up</Link></li>
+                    </>
+                  )}
+                  {/* Links only appear when user is logged in */}
+                  { isUserLoggedIn && (
+                    <>
+                      <li><Link to="/profile" className="dropdown-item">Settings</Link></li>
+                      <li><Link to="/logout" className="dropdown-item" onClick={handleLogout}>Logout</Link></li>
+                    </>
+                  )}
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     </header>
   );
-}
+};
 
 export default Header;
